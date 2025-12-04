@@ -1,0 +1,41 @@
+Project
+This is a two-part project (30 points) performed by a team consisting of two students. The teams for Lecture Notes project (Part A) and Compiler project (Part B) can differ.
+
+Part A (5+5 points): the preparation of the presentation in English based upon the topic and/or text supplied by the VYPa instructors (up to 5 points); individual mandatory oral presentation in English during the last lecture (up to 5 points). The both deadlines for the presentation and oral presentation are/will be in StudIS/Moodle. See StudIS/Moodle also for additional information about the required duration of the oral presentation and the discussion.
+Part B (20 points): implement VYPa25 Compiler from VYPlanguage into VYPcode. VYPlanguage is a simple programming language. In this implementation we omit object-oriented features — the compiler will cover imperative constructs (variables, expressions, control flow, functions) and generate VYPcode. The compiler you implement translates VYPlanguage source language into VYPcode (an intermediate/target language similar to assembly language) using tools for parser generation such as Flex/Bison, ANTLR or PLY. Use arbitrary implementation language usable on Merlin server (C, C++, Java, Python, Haskell, ...).
+
+To obtain specific information regarding your project, contact Zbyněk Křivka at krivka@fit.vut.cz.
+VYPa Compiler Project Information
+The specification of VYPa25 Compiler Project (including the specification of VYPlanguage and VYPcode)
+Command-line VYPcode interpreter in Java (requires version 1.8 or higher):
+vypint 1.0 (written in Java by Radim Kocman and Zbyněk Křivka)
+Several simple examples of VYPlanguage programs and VYPcode codes
+Extension supporting VYPcode editing and debugging in Visual Studio Code
+VYPcode Extension for Visual Studio Code (developped by Ondřej Krejčí in 2020/21/22)
+In the VYPa Compiler project, you develop a compiler that generates VYPcode as its target code. This extension can help you to understand VYPcode in details and to debug the generated VYPcode programs if you do not understand why they are malfunction.
+Supporting information
+Flex homepage and Bison homepage
+ANTLR Parser Generator homepage
+PLY (Python Lex-Yacc)
+GPLEX and GPPG homepage (needs to try compatibility with Mono-project at Merlin)
+Tools, Tips, and Tricks
+Javorek, J.: ANTLR: Parser Generator. VYPe presentation, 2010.
+Old and historical information
+2010 - 2017: The target language was MIPS32 (Lissom implementation):
+VYPa17 Projects Presentation
+Description of assembler directives
+List of supported assembler directives
+MIPS32 ISA
+CodAL model of MIPS32-Lissom (see mips_basic_ia_vyp/model/mips_basic.codal; version 2012-10-09)
+Command-line tools (Codasip) - Linux 64-bit version (works on Merlin)
+Command-line tools (Codasip) - Windows version
+Husár, A.: MIPS Processor Overview and its Modeling using the ISAC Language. HSC course lecture on 6th October, 2010.
+MIPS ABI (Register Usage conventions)
+2012-09-20: Command-line tool (bug with return code in register $3 instead registr $2)
+Linux 64-bit version
+2012-09-01: Old command-line tools (MUL instruction is not working in the simulator):
+Windows version
+Linux 32-bit version
+Linux 64-bit version
+CodAL model of MIPS32-Lissom (see mips_basic_ia_vyp/model/mips_basic.codal; includes some tests of VYPe-version MIPS-Lissom assembler; version 2011-12-02)
+2010-10-01: ISAC model of MIPS32-Lissom (see model/mips.isac)
