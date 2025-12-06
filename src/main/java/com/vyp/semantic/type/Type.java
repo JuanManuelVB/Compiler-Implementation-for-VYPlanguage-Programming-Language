@@ -1,6 +1,21 @@
 package com.vyp.semantic.type;
 
-public interface Type {
-    // Skeleton: Type interface kept
-    String getName();
+public class Type {
+
+    private String typeName;
+
+    public Type(String typeName) {
+        this.typeName = typeName;
+    }
+
+    public String getName() {
+        return typeName;
+    }
+
+    @Override
+    public String toString() {
+        return typeName;
+    }
+    
+    
 }

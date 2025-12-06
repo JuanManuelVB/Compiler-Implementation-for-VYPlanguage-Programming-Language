@@ -10,7 +10,7 @@ paramList: param (COMMA param)*;
 param: DATA_TYPE IDENT;
 
 /* Function call as a standalone statement: fun_id ( ( expr ( , expr )* )? ) ; */
-functionCall: IDENT LPAREN argList? RPAREN SEMI;
+functionCallStmt: IDENT LPAREN argList? RPAREN SEMI;
 
 //BLOCKS & STATEMENTS
 statement:
@@ -20,7 +20,6 @@ statement:
 	| ifStmt
 	| whileStmt
 	| returnStmt
-	| functionCall
 	| exprStmt
 	| SEMI ; // empty statement
 
@@ -28,8 +27,6 @@ block: LBRACE statement* RBRACE;
 
 /* Local variable definitions */
 localVarDecl:DATA_TYPE IDENT (COMMA IDENT)* SEMI;
-
-
 
 assignStmt: IDENT ASSIGN expr SEMI;
 
@@ -41,17 +38,47 @@ returnStmt: RETURN expr? SEMI;
 
 exprStmt: expr SEMI;
 
-// EXPRESSIONS 
-expr: STRING_LITERAL| INT_LITERAL|localVarDecl |LBRACE|RBRACE|functionCall| operators;
+// EXPRESSIONS (precedence from highest to lowest)
+expr
+	: logicalOrExpr
+	;
 
-unaryExpr: (MINUS | NOT) unaryExpr | primaryExpr;
+logicalOrExpr
+	: logicalAndExpr ( OR logicalAndExpr )*
+	;
 
-primaryExpr:
-	functionCall                	# functionCallExpr
-	| LPAREN expr RPAREN			# parenExpr
-	| INT_LITERAL					# intLiteral
-	| STRING_LITERAL				# stringLiteral
-	| IDENT							# varRef;
+logicalAndExpr
+	: equalityExpr ( AND equalityExpr )*
+	;
+
+equalityExpr
+	: relationalExpr ( (EQ | NEQ) relationalExpr )*
+	;
+
+relationalExpr
+	: additiveExpr ( (LT | LTE | GT | GTE) additiveExpr )*
+	;
+
+additiveExpr
+	: multiplicativeExpr ( (PLUS | MINUS) multiplicativeExpr )*
+	;
+
+multiplicativeExpr
+	: unaryExpr ( (STAR | SLASH) unaryExpr )*
+	;
+
+unaryExpr
+	: (MINUS | NOT) unaryExpr
+	| primaryExpr
+	;
+
+primaryExpr
+	: IDENT LPAREN argList? RPAREN    # functionCallExpr
+	| LPAREN expr RPAREN             # parenExpr
+	| INT_LITERAL                    # intLiteral
+	| STRING_LITERAL                 # stringLiteral
+	| IDENT                          # varRef
+	;
 
 argList: expr (COMMA expr)*;
 
@@ -100,7 +127,7 @@ NEQ: '!=';
 AND: '&&';
 OR: '||';
 
-operators: STAR | SLASH | PLUS | MINUS | LTE | GTE | LT | GT | EQ | NEQ | AND | OR;
+
 
 /* Literals and identifiers */
 INT_LITERAL: [0-9]+;

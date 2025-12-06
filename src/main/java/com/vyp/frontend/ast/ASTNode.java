@@ -1,5 +1,11 @@
 package com.vyp.frontend.ast;
 
+import com.vyp.frontend.ast.SourceLocation;;
+
 public interface ASTNode {
-	// Skeleton: AST node marker
+	
+	SourceLocation getSourceLocation();
+	//set location
+	void setSourceLocation(SourceLocation sourceLocation);
+
 }

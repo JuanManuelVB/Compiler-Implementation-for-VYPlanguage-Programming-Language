@@ -47,15 +47,15 @@ public interface VYPListener extends ParseTreeListener {
 	 */
 	void exitParam(VYPParser.ParamContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link VYPParser#functionCall}.
+	 * Enter a parse tree produced by {@link VYPParser#functionCallStmt}.
 	 * @param ctx the parse tree
 	 */
-	void enterFunctionCall(VYPParser.FunctionCallContext ctx);
+	void enterFunctionCallStmt(VYPParser.FunctionCallStmtContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link VYPParser#functionCall}.
+	 * Exit a parse tree produced by {@link VYPParser#functionCallStmt}.
 	 * @param ctx the parse tree
 	 */
-	void exitFunctionCall(VYPParser.FunctionCallContext ctx);
+	void exitFunctionCallStmt(VYPParser.FunctionCallStmtContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link VYPParser#statement}.
 	 * @param ctx the parse tree
@@ -147,6 +147,66 @@ public interface VYPListener extends ParseTreeListener {
 	 */
 	void exitExpr(VYPParser.ExprContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link VYPParser#logicalOrExpr}.
+	 * @param ctx the parse tree
+	 */
+	void enterLogicalOrExpr(VYPParser.LogicalOrExprContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link VYPParser#logicalOrExpr}.
+	 * @param ctx the parse tree
+	 */
+	void exitLogicalOrExpr(VYPParser.LogicalOrExprContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link VYPParser#logicalAndExpr}.
+	 * @param ctx the parse tree
+	 */
+	void enterLogicalAndExpr(VYPParser.LogicalAndExprContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link VYPParser#logicalAndExpr}.
+	 * @param ctx the parse tree
+	 */
+	void exitLogicalAndExpr(VYPParser.LogicalAndExprContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link VYPParser#equalityExpr}.
+	 * @param ctx the parse tree
+	 */
+	void enterEqualityExpr(VYPParser.EqualityExprContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link VYPParser#equalityExpr}.
+	 * @param ctx the parse tree
+	 */
+	void exitEqualityExpr(VYPParser.EqualityExprContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link VYPParser#relationalExpr}.
+	 * @param ctx the parse tree
+	 */
+	void enterRelationalExpr(VYPParser.RelationalExprContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link VYPParser#relationalExpr}.
+	 * @param ctx the parse tree
+	 */
+	void exitRelationalExpr(VYPParser.RelationalExprContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link VYPParser#additiveExpr}.
+	 * @param ctx the parse tree
+	 */
+	void enterAdditiveExpr(VYPParser.AdditiveExprContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link VYPParser#additiveExpr}.
+	 * @param ctx the parse tree
+	 */
+	void exitAdditiveExpr(VYPParser.AdditiveExprContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link VYPParser#multiplicativeExpr}.
+	 * @param ctx the parse tree
+	 */
+	void enterMultiplicativeExpr(VYPParser.MultiplicativeExprContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link VYPParser#multiplicativeExpr}.
+	 * @param ctx the parse tree
+	 */
+	void exitMultiplicativeExpr(VYPParser.MultiplicativeExprContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link VYPParser#unaryExpr}.
 	 * @param ctx the parse tree
 	 */
@@ -236,14 +296,4 @@ public interface VYPListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitType(VYPParser.TypeContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link VYPParser#operators}.
-	 * @param ctx the parse tree
-	 */
-	void enterOperators(VYPParser.OperatorsContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link VYPParser#operators}.
-	 * @param ctx the parse tree
-	 */
-	void exitOperators(VYPParser.OperatorsContext ctx);
 }
