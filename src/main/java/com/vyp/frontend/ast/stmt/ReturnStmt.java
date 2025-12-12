@@ -1,16 +1,22 @@
 package com.vyp.frontend.ast.stmt;
 import com.vyp.frontend.ast.SourceLocation;
-import com.vyp.frontend.ast.expr.Expr;
+import com.vyp.frontend.ast.expr.Expression;
+import com.vyp.frontend.ASTVisitor;
 
-public class ReturnStmt extends Stmt {
-    private Expr value;
+public class ReturnStmt extends Statement {
+    private Expression value;
 
-    public ReturnStmt(Expr value, SourceLocation sourceLocation) {
+    public ReturnStmt(Expression value, SourceLocation sourceLocation) {
         super(sourceLocation);
         this.value = value;
     }
 
-    public Expr getValue() {
+    public Expression getValue() {
         return value;
+    }
+
+    @Override
+    public <T> T accept(ASTVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 }   

@@ -1,14 +1,15 @@
 package com.vyp.frontend.ast.expr;
 import com.vyp.frontend.ast.SourceLocation; 
+import com.vyp.frontend.ASTVisitor;
 
 import java.util.List;
 
-public class FunctionCallExpr extends Expr {
-    // Skeleton: function call expression removed
-    private String functionName;
-    private List<Expr> arguments;
+public class FunctionCallExpr extends Expression {
 
-    public FunctionCallExpr(String functionName, List<Expr> arguments, SourceLocation sourceLocation) {
+    private String functionName;
+    private List<Expression> arguments;
+
+    public FunctionCallExpr(String functionName, List<Expression> arguments, SourceLocation sourceLocation) {
         super(sourceLocation);
         this.functionName = functionName;
         this.arguments = arguments;
@@ -18,7 +19,12 @@ public class FunctionCallExpr extends Expr {
         return functionName;
     }
 
-    public List<Expr> getArguments() {
+    public List<Expression> getArguments() {
         return arguments;
+    }
+
+    @Override
+    public <T> T accept(ASTVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 }

@@ -3,11 +3,13 @@ import com.vyp.frontend.ast.SourceLocation;
 
 import java.lang.reflect.Type;
 import java.util.List;
+import com.vyp.frontend.ASTVisitor;
 
-public class VarDeclStmt extends Stmt {
-    // Skeleton: variable declaration removed
+public class VarDeclStmt extends Statement {
+
     private Type type;
     private List<String> varNames;
+    
     public VarDeclStmt(Type type, List<String> varNames, SourceLocation sourceLocation) {
         super(sourceLocation);
         this.type = type;
@@ -19,5 +21,10 @@ public class VarDeclStmt extends Stmt {
     public List<String> getVarNames() {
         return varNames;
     }
+
+    @Override
+    public <T> T accept(ASTVisitor<T> visitor) {
+        return visitor.visit(this);
+    }   
     
 }

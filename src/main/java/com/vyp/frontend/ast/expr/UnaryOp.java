@@ -1,25 +1,33 @@
 package com.vyp.frontend.ast.expr;
 
-public class UnaryOp extends Expr {
-    // Skeleton: unary op removed
+import com.vyp.frontend.ast.SourceLocation;
+import com.vyp.frontend.ASTVisitor;
+
+public class UnaryOp extends Expression {
+
     public enum UnaryOperator {
         NOT
     }
 
-    private Expr expression;
+    private Expression expression;
     private UnaryOperator operator;
 
-    public UnaryOp(Expr expression, UnaryOperator operator, SourceLocation sourceLocation) {
+    public UnaryOp(Expression expression, UnaryOperator operator, SourceLocation sourceLocation) {
         super(sourceLocation);
         this.expression = expression;
         this.operator = operator;
     }
 
-    public Expr getExpression() {
+    public Expression getExpression() {
         return expression;
     }
 
     public UnaryOperator getOperator() {
         return operator;
     }
+
+    @Override
+    public <T> T accept(ASTVisitor<T> visitor) {    
+        return visitor.visit(this);
+    }   
 }

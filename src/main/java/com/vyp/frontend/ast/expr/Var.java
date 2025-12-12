@@ -1,7 +1,9 @@
 package com.vyp.frontend.ast.expr;
-import com.vyp.frontend.ast.SourceLocation;
 
-public class Var extends Expr {
+import com.vyp.frontend.ast.SourceLocation;
+import com.vyp.frontend.ASTVisitor;
+
+public class Var extends Expression {
     
     private String name;
 
@@ -13,4 +15,9 @@ public class Var extends Expr {
     public String getName() {
         return name;
     }
+
+    @Override
+    public <T> T accept(ASTVisitor<T> visitor) {    
+        return visitor.visit(this);
+    }   
 }
