@@ -33,7 +33,7 @@ import com.vyp.semantic.type.StringType;
 import com.vyp.semantic.type.Type;
 import com.vyp.semantic.type.VoidType;
 
-public class ASTBuilder extends VYPBaseVisitor<ASTNode> {
+public class ASTBuilder extends VYPBaseVisitor<Object> {
 
     private SourceLocation getLocation(ParserRuleContext prctx) {
         Token t = prctx.getStart();
@@ -55,7 +55,7 @@ public class ASTBuilder extends VYPBaseVisitor<ASTNode> {
 
     @Override
     public FunctionDecl visitFunctionDecl(VYPParser.FunctionDeclContext ctx) {
-        String name = ctx.ID().getText();
+        String name = ctx.IDENT().getText();
         Type returnType = (Type) visit(ctx.type());
         List<Parameter> params = new ArrayList<>();
         if (ctx.paramList() != null) {
@@ -69,15 +69,20 @@ public class ASTBuilder extends VYPBaseVisitor<ASTNode> {
 
     @Override
     public Parameter visitParam(VYPParser.ParamContext ctx) {
-        String name = ctx.ID().getText();
-        Type type = (Type) visit(ctx.type());
+        String name = ctx.IDENT().getText();
+        // param: DATA_TYPE IDENT;
+        Type type = ctx.DATA_TYPE() != null && "int".equals(ctx.DATA_TYPE().getText()) ? IntType.INSTANCE : StringType.INSTANCE;
         return new Parameter(name, type, getLocation(ctx));
     }
 
     @Override
     public Type visitType(VYPParser.TypeContext ctx) {
-        if (ctx.INT() != null) return IntType.INSTANCE;
-        if (ctx.STRING() != null) return StringType.INSTANCE;
+        if (ctx.DATA_TYPE() != null) {
+            String dt = ctx.DATA_TYPE().getText();
+            if ("int".equals(dt)) return IntType.INSTANCE;
+            if ("string".equals(dt)) return StringType.INSTANCE;
+        }
+        if (ctx.VOID() != null) return VoidType.INSTANCE;
         return VoidType.INSTANCE;
     }
 
@@ -97,9 +102,9 @@ public class ASTBuilder extends VYPBaseVisitor<ASTNode> {
 
     @Override
     public VarDeclStmt visitLocalVarDecl(VYPParser.LocalVarDeclContext ctx) {
-        Type type = (Type) visit(ctx.type());
+        Type type = ctx.DATA_TYPE() != null && "int".equals(ctx.DATA_TYPE().getText()) ? IntType.INSTANCE : StringType.INSTANCE;
         List<String> names = new ArrayList<>();
-        for (Token id : ctx.ID()) {
+        for (TerminalNode id : ctx.IDENT()) {
             names.add(id.getText());
         }
         return new VarDeclStmt(type, names, getLocation(ctx));
@@ -107,7 +112,7 @@ public class ASTBuilder extends VYPBaseVisitor<ASTNode> {
 
     @Override
     public AssignStmt visitAssignStmt(VYPParser.AssignStmtContext ctx) {
-        String name = ctx.ID().getText();
+        String name = ctx.IDENT().getText();
         Expression value = (Expression) visit(ctx.expr());
         return new AssignStmt(name, value, getLocation(ctx));
     }
@@ -180,7 +185,7 @@ public class ASTBuilder extends VYPBaseVisitor<ASTNode> {
         for (int i = 1; i < ctx.relationalExpr().size(); i++) {
             Expression right = (Expression) visit(ctx.relationalExpr(i));
             BinaryOp.BinaryOperator op = ctx.EQ(i-1) != null ? BinaryOp.BinaryOperator.EQ :
-                                         ctx.NE(i-1) != null ? BinaryOp.BinaryOperator.NE : null;
+                                         ctx.NEQ(i-1) != null ? BinaryOp.BinaryOperator.NEQ : null;
             left = new BinaryOp(left, right, op, getLocation(ctx));
         }
         return left;
@@ -195,9 +200,9 @@ public class ASTBuilder extends VYPBaseVisitor<ASTNode> {
         for (int i = 1; i < ctx.additiveExpr().size(); i++) {
             Expression right = (Expression) visit(ctx.additiveExpr(i));
             BinaryOp.BinaryOperator op = ctx.LT(i-1) != null ? BinaryOp.BinaryOperator.LT :
-                                         ctx.LE(i-1) != null ? BinaryOp.BinaryOperator.LE :
+                                         ctx.LTE(i-1) != null ? BinaryOp.BinaryOperator.LTE :
                                          ctx.GT(i-1) != null ? BinaryOp.BinaryOperator.GT :
-                                         ctx.GE(i-1) != null ? BinaryOp.BinaryOperator.GE : null;
+                                         ctx.GTE(i-1) != null ? BinaryOp.BinaryOperator.GTE : null;
             left = new BinaryOp(left, right, op, getLocation(ctx));
         }
         return left;
@@ -211,8 +216,8 @@ public class ASTBuilder extends VYPBaseVisitor<ASTNode> {
         Expression left = (Expression) visit(ctx.multiplicativeExpr(0));
         for (int i = 1; i < ctx.multiplicativeExpr().size(); i++) {
             Expression right = (Expression) visit(ctx.multiplicativeExpr(i));
-            BinaryOp.BinaryOperator op = ctx.ADD(i-1) != null ? BinaryOp.BinaryOperator.ADD :
-                                         ctx.SUB(i-1) != null ? BinaryOp.BinaryOperator.SUB : null;
+            BinaryOp.BinaryOperator op = ctx.PLUS(i-1) != null ? BinaryOp.BinaryOperator.ADD :
+                                         ctx.MINUS(i-1) != null ? BinaryOp.BinaryOperator.SUB : null;
             left = new BinaryOp(left, right, op, getLocation(ctx));
         }
         return left;
@@ -226,8 +231,8 @@ public class ASTBuilder extends VYPBaseVisitor<ASTNode> {
         Expression left = (Expression) visit(ctx.unaryExpr(0));
         for (int i = 1; i < ctx.unaryExpr().size(); i++) {
             Expression right = (Expression) visit(ctx.unaryExpr(i));
-            BinaryOp.BinaryOperator op = ctx.MUL(i-1) != null ? BinaryOp.BinaryOperator.MUL :
-                                         ctx.DIV(i-1) != null ? BinaryOp.BinaryOperator.DIV : null;
+            BinaryOp.BinaryOperator op = ctx.STAR(i-1) != null ? BinaryOp.BinaryOperator.MUL :
+                                         ctx.SLASH(i-1) != null ? BinaryOp.BinaryOperator.DIV : null;
             left = new BinaryOp(left, right, op, getLocation(ctx));
         }
         return left;
@@ -239,37 +244,40 @@ public class ASTBuilder extends VYPBaseVisitor<ASTNode> {
             Expression inner = (Expression) visit(ctx.unaryExpr());
             return new UnaryOp(inner, UnaryOp.UnaryOperator.NOT, getLocation(ctx));
         }
-        return (Expression) visit(ctx.atomExpr());
+        return (Expression) visit(ctx.primaryExpr());
+    }
+    @Override
+    public Expression visitFunctionCallExpr(VYPParser.FunctionCallExprContext ctx) {
+        String fname = ctx.IDENT().getText();
+        List<Expression> args = new ArrayList<>();
+        if (ctx.argList() != null) {
+            for (VYPParser.ExprContext ectx : ctx.argList().expr()) {
+                args.add((Expression) visit(ectx));
+            }
+        }
+        return new FunctionCallExpr(fname, args, getLocation(ctx));
     }
 
     @Override
-    public Expression visitAtomExpr(VYPParser.AtomExprContext ctx) {
-        if (ctx.INT_LITERAL() != null) {
-            int val = Integer.parseInt(ctx.INT_LITERAL().getText());
-            return new IntLiteral(val, getLocation(ctx));
-        }
-        if (ctx.STRING_LITERAL() != null) {
-            String text = ctx.STRING_LITERAL().getText();
-            text = text.substring(1, text.length() - 1);
-            return new StringLiteral(text, getLocation(ctx));
-        }
-        if (ctx.ID() != null && ctx.LPAREN() == null) {
-            return new Var(ctx.ID().getText(), getLocation(ctx));
-        }
-        if (ctx.LPAREN() != null) {
-            return (Expression) visit(ctx.expr());
-        }
-        // Function call
-        if (ctx.ID() != null && ctx.LPAREN() != null) {
-            String fname = ctx.ID().getText();
-            List<Expression> args = new ArrayList<>();
-            if (ctx.argList() != null) {
-                for (VYPParser.ExprContext ectx : ctx.argList().expr()) {
-                    args.add((Expression) visit(ectx));
-                }
-            }
-            return new FunctionCallExpr(fname, args, getLocation(ctx));
-        }
-        return null; // Error
+    public Expression visitParenExpr(VYPParser.ParenExprContext ctx) {
+        return (Expression) visit(ctx.expr());
+    }
+
+    @Override
+    public Expression visitIntLiteral(VYPParser.IntLiteralContext ctx) {
+        int val = Integer.parseInt(ctx.INT_LITERAL().getText());
+        return new IntLiteral(val, getLocation(ctx));
+    }
+
+    @Override
+    public Expression visitStringLiteral(VYPParser.StringLiteralContext ctx) {
+        String text = ctx.STRING_LITERAL().getText();
+        text = text.substring(1, text.length() - 1);
+        return new StringLiteral(text, getLocation(ctx));
+    }
+
+    @Override
+    public Expression visitVarRef(VYPParser.VarRefContext ctx) {
+        return new Var(ctx.IDENT().getText(), getLocation(ctx));
     }
 }

@@ -1,17 +1,17 @@
 package com.vyp.semantic.type;
 
-public class ErrorType extends Type {
+import com.vyp.semantic.type.Type.BasicType;
 
-    public ErrorType(BasicType basicType) {
+public class ErrorType extends Type {
+ 
+    public static final ErrorType INSTANCE = new ErrorType();
+
+    public ErrorType() {
         super(BasicType.ERROR);
     }
 
-    @Override
+        @Override
     public String toString() {
         return "ERROR";
     }
-
-
-
-
 }
