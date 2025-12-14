@@ -1,5 +1,9 @@
 package com.vyp.semantic.type;
 
-public class IntType implements Type {
-    // Skeleton: int type removed
+public class IntType extends Type {
+    public static final IntType INSTANCE = new IntType();
+
+    public IntType() {
+        super(BasicType.INT);
+    }
 }

@@ -1,5 +1,9 @@
 package com.vyp.semantic.type;
 
-public class StringType implements Type {
-    // Skeleton: string type removed
+public class StringType extends Type {
+    public static final StringType INSTANCE = new StringType();
+
+    public StringType() {
+        super(BasicType.STRING);
+    }
 }

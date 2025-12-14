@@ -1,5 +1,9 @@
 package com.vyp.semantic.type;
 
-public class ErrorType implements Type {
-    // Skeleton: error type removed
+public class ErrorType extends Type {
+    public static final ErrorType INSTANCE = new ErrorType();
+
+    public ErrorType() {
+        super(BasicType.ERROR);
+    }
 }
