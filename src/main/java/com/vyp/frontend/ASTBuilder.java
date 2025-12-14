@@ -1,26 +1,40 @@
 package com.vyp.frontend;
 
-import com.vyp.frontend.ast.*;
-import com.vyp.frontend.ast.expr.*;
-import com.vyp.frontend.ast.stmt.*;
-import com.vyp.semantic.type.*;
-
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.VYPParser;
-
-import java.lang.Thread.State;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
+
+import com.vyp.antlr4.VYPBaseVisitor;
+import com.vyp.antlr4.VYPParser;
+import com.vyp.frontend.ast.ASTNode;
+import com.vyp.frontend.ast.FunctionDecl;
+import com.vyp.frontend.ast.Parameter;
+import com.vyp.frontend.ast.Program;
+import com.vyp.frontend.ast.SourceLocation;
+import com.vyp.frontend.ast.expr.BinaryOp;
+import com.vyp.frontend.ast.expr.Expression;
+import com.vyp.frontend.ast.expr.FunctionCallExpr;
+import com.vyp.frontend.ast.expr.IntLiteral;
+import com.vyp.frontend.ast.expr.StringLiteral;
+import com.vyp.frontend.ast.expr.UnaryOp;
+import com.vyp.frontend.ast.expr.Var;
+import com.vyp.frontend.ast.stmt.AssignStmt;
+import com.vyp.frontend.ast.stmt.BlockStmt;
+import com.vyp.frontend.ast.stmt.ExprStmt;
+import com.vyp.frontend.ast.stmt.IfStmt;
+import com.vyp.frontend.ast.stmt.ReturnStmt;
+import com.vyp.frontend.ast.stmt.Statement;
+import com.vyp.frontend.ast.stmt.VarDeclStmt;
+import com.vyp.frontend.ast.stmt.WhileStmt;
+import com.vyp.semantic.type.IntType;
+import com.vyp.semantic.type.StringType;
+import com.vyp.semantic.type.Type;
+import com.vyp.semantic.type.VoidType;
+
 public class ASTBuilder extends VYPBaseVisitor<ASTNode> {
 
-    /**
-     * Get source location from parser rule context. Traslates line and column from antlr to our
-     * SourceLocation class.
-     * @param prctx
-     * @return
-     */
     private SourceLocation getLocation(ParserRuleContext prctx) {
         Token t = prctx.getStart();
         return new SourceLocation(t.getLine(), t.getCharPositionInLine());
@@ -30,229 +44,232 @@ public class ASTBuilder extends VYPBaseVisitor<ASTNode> {
         return new SourceLocation(token.getLine(), token.getCharPositionInLine());
     }
 
-    /**
-     * Helper method to get location. IT calls getLocation with the start token of the context.
-     * @param pctx
-     * @return
-     */
     @Override
-    public Program visitProgram(VYPParser.ProgramContext pctx) {
+    public Program visitProgram(VYPParser.ProgramContext ctx) {
         List<FunctionDecl> functions = new ArrayList<>();
-
-        for (VYPParser.FunctionDeclContext fctx : pctx.functionDecl()) {
+        for (VYPParser.FunctionDeclContext fctx : ctx.functionDecl()) {
             functions.add((FunctionDecl) visit(fctx));
         }
-
-        return new Program(functions, getLocation(pctx));
+        return new Program(functions, getLocation(ctx));
     }
 
-    /**
-     * Visit function declaration
-     * @param fctx
-     * @return
-     */
     @Override
-    public FunctionDecl visitFunctionDecl(VYPParser.FunctionDeclContext fctx) {
-        String name = fctx.ID().getText();
-
-        // tipo return
-        Type returnType = (Type) visit(fctx.type());
-
-        // parámetros
-        List<Parameter> Parameters = new ArrayList<>();
-        if (fctx.ParameterList() != null) {
-            for (VYPParser.ParameterContext pctx : fctx.ParameterList().Parameter()) {
-                Parameters.add((Parameter) visit(pctx));
+    public FunctionDecl visitFunctionDecl(VYPParser.FunctionDeclContext ctx) {
+        String name = ctx.ID().getText();
+        Type returnType = (Type) visit(ctx.type());
+        List<Parameter> params = new ArrayList<>();
+        if (ctx.paramList() != null) {
+            for (VYPParser.ParamContext pctx : ctx.paramList().param()) {
+                params.add((Parameter) visit(pctx));
             }
         }
-
-        BlockStmt body = (BlockStmt) visit(fctx.block());
-
-        return new FunctionDecl(name, returnType, Parameters, body, getLocation(fctx));
+        BlockStmt body = (BlockStmt) visit(ctx.block());
+        return new FunctionDecl(name, returnType, params, body, getLocation(ctx));
     }
 
-    /**
-     * Visit and constructs parameter
-     * @param paramctx
-     * @return
-     */
     @Override
-    public Parameter visitParameter(VYPParser.ParameterContext paramctx) {
-        String name = paramctx.ID().getText();
-        Type t = (Type) visit(paramctx.type());
-        return new Parameter(name, t, getLocation(paramctx));
+    public Parameter visitParam(VYPParser.ParamContext ctx) {
+        String name = ctx.ID().getText();
+        Type type = (Type) visit(ctx.type());
+        return new Parameter(name, type, getLocation(ctx));
     }
 
-    /**
-     * Visit type
-     * @param ctx
-     * @return
-     */
     @Override
-    public Type visitType(VYPParser.TypeContext tctx) {
-        if (tctx.INT() != null) return IntType.INSTANCE;
-        if (tctx.STRING() != null) return StringType.INSTANCE;
+    public Type visitType(VYPParser.TypeContext ctx) {
+        if (ctx.INT() != null) return IntType.INSTANCE;
+        if (ctx.STRING() != null) return StringType.INSTANCE;
         return VoidType.INSTANCE;
     }
 
-    /**
-     * Visit block statement, converting  { stmt1 ; stmt2 ; ... } in a BlockStmt with a statement list.
-     * @param ctx
-     * @return
-     */
     @Override
-    public BlockStmt visitBlock(VYPParser.BlockContext bctx) {
+    public BlockStmt visitBlock(VYPParser.BlockContext ctx) {
         List<Statement> stmts = new ArrayList<>();
-        for (VYPParser.StatementContext sctx : bctx.statement()) {
+        for (VYPParser.StatementContext sctx : ctx.statement()) {
             stmts.add((Statement) visit(sctx));
         }
-        return new BlockStmt(stmts, getLocation(bctx));
-    }
-
-    /**
-     * Each antlr statement is converted to a Statement node of my AST tree by visiting it.
-     * @param ctx
-     * @return
-     */
-    @Override
-    public Statement visitStatement(VYPParser.StatementContext sctx) {
-        return (Statement) visitChildren(sctx);
+        return new BlockStmt(stmts, getLocation(ctx));
     }
 
     @Override
-    public VarDeclStmt visitVarDeclStatement(VYPParser.VarDeclContext varctx) {
-        Type t = (Type) visit(varctx.type());
+    public Statement visitStatement(VYPParser.StatementContext ctx) {
+        return (Statement) visitChildren(ctx);
+    }
+
+    @Override
+    public VarDeclStmt visitLocalVarDecl(VYPParser.LocalVarDeclContext ctx) {
+        Type type = (Type) visit(ctx.type());
         List<String> names = new ArrayList<>();
-
-        for (Token id : varctx.ID()) {
+        for (Token id : ctx.ID()) {
             names.add(id.getText());
         }
-
-        return new VarDeclStmt(t, names, getLocation(varctx));
+        return new VarDeclStmt(type, names, getLocation(ctx));
     }
 
     @Override
-    public AssignStmt visitAssignStatement(VYPParser.AssignStatContext actx) {
-        String name = actx.ID().getText();
-        Expression value = (Expression) visit(actx.expr());
-        return new AssignStmt(name, value, getLocation(actx));
+    public AssignStmt visitAssignStmt(VYPParser.AssignStmtContext ctx) {
+        String name = ctx.ID().getText();
+        Expression value = (Expression) visit(ctx.expr());
+        return new AssignStmt(name, value, getLocation(ctx));
     }
 
     @Override
-    public IfStmt visitIfStatement(VYPParser.IfStatContext ifctx) {
-        Expression cond = (Expression) visit(ifctx.expr());
-        BlockStmt thenBlock = (BlockStmt) visit(ifctx.block(0));
-        BlockStmt elseBlock = ifctx.block().size() > 1
-                ? (BlockStmt) visit(ifctx.block(1))
-                : null;
-
-        return new IfStmt(cond, thenBlock, elseBlock, getLocation(ifctx));
+    public IfStmt visitIfStmt(VYPParser.IfStmtContext ctx) {
+        Expression cond = (Expression) visit(ctx.expr());
+        BlockStmt thenBlock = (BlockStmt) visit(ctx.block(0));
+        BlockStmt elseBlock = ctx.block().size() > 1 ? (BlockStmt) visit(ctx.block(1)) : null;
+        return new IfStmt(cond, thenBlock, elseBlock, getLocation(ctx));
     }
 
     @Override
-    public WhileStmt visitWhileStatement(VYPParser.WhenStatContext whenctx) {
-        Expression cond = (Expression) visit(whenctx.expr());
-        BlockStmt body = (BlockStmt) visit(whenctx.block());
-        return new WhileStmt(cond, body, getLocation(whenctx));
+    public WhileStmt visitWhileStmt(VYPParser.WhileStmtContext ctx) {
+        Expression cond = (Expression) visit(ctx.expr());
+        BlockStmt body = (BlockStmt) visit(ctx.block());
+        return new WhileStmt(cond, body, getLocation(ctx));
     }
 
     @Override
-    public ReturnStmt visitReturnStatement(VYPParser.ReturnStatContext retctx) {
-        Expression value = retctx.expr() != null ? (Expression) visit(retctx.expr()) : null;
-        return new ReturnStmt(value, getLocation(retctx));
+    public ReturnStmt visitReturnStmt(VYPParser.ReturnStmtContext ctx) {
+        Expression value = ctx.expr() != null ? (Expression) visit(ctx.expr()) : null;
+        return new ReturnStmt(value, getLocation(ctx));
     }
 
     @Override
-    public ExprStmt visitExprStatement(VYPParser.ExprStatContext exprctx) {
-        Expression expr = (Expression) visit(exprctx.expr());
-        return new ExprStmt(expr, getLocation(exprctx));
+    public ExprStmt visitExprStmt(VYPParser.ExprStmtContext ctx) {
+        Expression expr = (Expression) visit(ctx.expr());
+        return new ExprStmt(expr, getLocation(ctx));
     }
 
-    /**
-     * Construct atomic expressions: int literals, string literals, variable references and parenthesized expressions, 
-     * from the antlr parse tree to my AST tree.
-     * @param ctx
-     * @return
-     */
     @Override
-    public Expression visitExpr(VYPParser.AtomExprContext atomctx) {
-        if (atomctx.INT_LITERAL() != null) {
-            int val = Integer.parseInt(atomctx.INT_LITERAL().getText());
-            return new IntLiteral(val, getLocation(atomctx));
+    public Expression visitExpr(VYPParser.ExprContext ctx) {
+        return (Expression) visit(ctx.logicalOrExpr());
+    }
+
+    @Override
+    public Expression visitLogicalOrExpr(VYPParser.LogicalOrExprContext ctx) {
+        if (ctx.logicalAndExpr().size() == 1) {
+            return (Expression) visit(ctx.logicalAndExpr(0));
         }
-
-        if (atomctx.STRING_LITERAL() != null) {
-            String text = atomctx.STRING_LITERAL().getText();
-            text = text.substring(1, text.length()-1); // quitar comillas
-            return new StringLiteral(text, getLocation(atomctx));
+        // Handle OR chain, but for simplicity, assume left assoc
+        Expression left = (Expression) visit(ctx.logicalAndExpr(0));
+        for (int i = 1; i < ctx.logicalAndExpr().size(); i++) {
+            Expression right = (Expression) visit(ctx.logicalAndExpr(i));
+            left = new BinaryOp(left, right, BinaryOp.BinaryOperator.OR, getLocation(ctx));
         }
-
-        if (atomctx.ID() != null) {
-            return new Var(atomctx.ID().getText(), getLocation(atomctx));
-        }
-
-        // (expr)
-        return (Expression) visit(atomctx.expr());
+        return left;
     }
 
     @Override
-    public Expression visitCallExpr(VYPParser.CallExprContext callctx) {
+    public Expression visitLogicalAndExpr(VYPParser.LogicalAndExprContext ctx) {
+        if (ctx.equalityExpr().size() == 1) {
+            return (Expression) visit(ctx.equalityExpr(0));
+        }
+        Expression left = (Expression) visit(ctx.equalityExpr(0));
+        for (int i = 1; i < ctx.equalityExpr().size(); i++) {
+            Expression right = (Expression) visit(ctx.equalityExpr(i));
+            left = new BinaryOp(left, right, BinaryOp.BinaryOperator.AND, getLocation(ctx));
+        }
+        return left;
+    }
 
-        String fname = callctx.ID().getText();
-        List<Expression> args = new ArrayList<>();
+    @Override
+    public Expression visitEqualityExpr(VYPParser.EqualityExprContext ctx) {
+        if (ctx.relationalExpr().size() == 1) {
+            return (Expression) visit(ctx.relationalExpr(0));
+        }
+        Expression left = (Expression) visit(ctx.relationalExpr(0));
+        for (int i = 1; i < ctx.relationalExpr().size(); i++) {
+            Expression right = (Expression) visit(ctx.relationalExpr(i));
+            BinaryOp.BinaryOperator op = ctx.EQ(i-1) != null ? BinaryOp.BinaryOperator.EQ :
+                                         ctx.NE(i-1) != null ? BinaryOp.BinaryOperator.NE : null;
+            left = new BinaryOp(left, right, op, getLocation(ctx));
+        }
+        return left;
+    }
 
-        if (callctx.argList() != null) {
-            for (VYPParser.ExprContext ectx : callctx.argList().expr()) {
-                args.add((Expression) visit(ectx));
+    @Override
+    public Expression visitRelationalExpr(VYPParser.RelationalExprContext ctx) {
+        if (ctx.additiveExpr().size() == 1) {
+            return (Expression) visit(ctx.additiveExpr(0));
+        }
+        Expression left = (Expression) visit(ctx.additiveExpr(0));
+        for (int i = 1; i < ctx.additiveExpr().size(); i++) {
+            Expression right = (Expression) visit(ctx.additiveExpr(i));
+            BinaryOp.BinaryOperator op = ctx.LT(i-1) != null ? BinaryOp.BinaryOperator.LT :
+                                         ctx.LE(i-1) != null ? BinaryOp.BinaryOperator.LE :
+                                         ctx.GT(i-1) != null ? BinaryOp.BinaryOperator.GT :
+                                         ctx.GE(i-1) != null ? BinaryOp.BinaryOperator.GE : null;
+            left = new BinaryOp(left, right, op, getLocation(ctx));
+        }
+        return left;
+    }
+
+    @Override
+    public Expression visitAdditiveExpr(VYPParser.AdditiveExprContext ctx) {
+        if (ctx.multiplicativeExpr().size() == 1) {
+            return (Expression) visit(ctx.multiplicativeExpr(0));
+        }
+        Expression left = (Expression) visit(ctx.multiplicativeExpr(0));
+        for (int i = 1; i < ctx.multiplicativeExpr().size(); i++) {
+            Expression right = (Expression) visit(ctx.multiplicativeExpr(i));
+            BinaryOp.BinaryOperator op = ctx.ADD(i-1) != null ? BinaryOp.BinaryOperator.ADD :
+                                         ctx.SUB(i-1) != null ? BinaryOp.BinaryOperator.SUB : null;
+            left = new BinaryOp(left, right, op, getLocation(ctx));
+        }
+        return left;
+    }
+
+    @Override
+    public Expression visitMultiplicativeExpr(VYPParser.MultiplicativeExprContext ctx) {
+        if (ctx.unaryExpr().size() == 1) {
+            return (Expression) visit(ctx.unaryExpr(0));
+        }
+        Expression left = (Expression) visit(ctx.unaryExpr(0));
+        for (int i = 1; i < ctx.unaryExpr().size(); i++) {
+            Expression right = (Expression) visit(ctx.unaryExpr(i));
+            BinaryOp.BinaryOperator op = ctx.MUL(i-1) != null ? BinaryOp.BinaryOperator.MUL :
+                                         ctx.DIV(i-1) != null ? BinaryOp.BinaryOperator.DIV : null;
+            left = new BinaryOp(left, right, op, getLocation(ctx));
+        }
+        return left;
+    }
+
+    @Override
+    public Expression visitUnaryExpr(VYPParser.UnaryExprContext ctx) {
+        if (ctx.NOT() != null) {
+            Expression inner = (Expression) visit(ctx.unaryExpr());
+            return new UnaryOp(inner, UnaryOp.UnaryOperator.NOT, getLocation(ctx));
+        }
+        return (Expression) visit(ctx.atomExpr());
+    }
+
+    @Override
+    public Expression visitAtomExpr(VYPParser.AtomExprContext ctx) {
+        if (ctx.INT_LITERAL() != null) {
+            int val = Integer.parseInt(ctx.INT_LITERAL().getText());
+            return new IntLiteral(val, getLocation(ctx));
+        }
+        if (ctx.STRING_LITERAL() != null) {
+            String text = ctx.STRING_LITERAL().getText();
+            text = text.substring(1, text.length() - 1);
+            return new StringLiteral(text, getLocation(ctx));
+        }
+        if (ctx.ID() != null && ctx.LPAREN() == null) {
+            return new Var(ctx.ID().getText(), getLocation(ctx));
+        }
+        if (ctx.LPAREN() != null) {
+            return (Expression) visit(ctx.expr());
+        }
+        // Function call
+        if (ctx.ID() != null && ctx.LPAREN() != null) {
+            String fname = ctx.ID().getText();
+            List<Expression> args = new ArrayList<>();
+            if (ctx.argList() != null) {
+                for (VYPParser.ExprContext ectx : ctx.argList().expr()) {
+                    args.add((Expression) visit(ectx));
+                }
             }
+            return new FunctionCallExpr(fname, args, getLocation(ctx));
         }
-
-        return new FunctionCallExpr(fname, args, getLocation(callctx));
+        return null; // Error
     }
-
-    @Override
-    public Expression visitBinMulExpr(VYPParser.MulExprContext binctx) {
-        if (binctx.op == null)
-            return (Expression) visit(binctx.unaryExpr(0));
-
-        Expression left = (Expression) visit(binctx.unaryExpr(0));
-        Expression right = (Expression) visit(binctx.unaryExpr(1));
-        BinaryOp op =
-            binctx.MUL() != null ? BinaryOp.BinaryOperator.MUL :
-            binctx.DIV() != null ? BinaryOp.BinaryOperator.DIV :
-            null;
-
-        return new BinaryOp(left, right, op, getLocation(binctx));
-    }
-
-    @Override
-    public Expression visitBinAddExpr(VYPParser.AddExprContext binctx) {
-        if (binctx.op == null)
-            return (Expression) visit(binctx.mulExpr(0));
-
-        Expression left = (Expression) visit(binctx.mulExpr(0));
-        Expression right = (Expression) visit(binctx.mulExpr(1));
-
-        BinaryOperator op =
-            binctx.ADD() != null ? BinaryOp.BinaryOperator.ADD :
-            binctx.SUB() != null ? BinaryOp.BinaryOperator.SUB :
-            null;
-
-        return new BinaryOp(left, right, op, getLocation(binctx));
-    }
-
-    @Override
-    public Expression visitUnaryExpr(VYPParser.UnaryExprContext unctx) {
-        if (unctx.NOT() != null) {
-            Expression inner = (Expression) visit(unctx.unaryExpr());
-            return new UnaryOp(UnaryOp.UnaryOperator.NOT, inner, loc(unctx));
-        }
-        return (Expression) visit(unctx.atomExpr());
-    }
-
-    @Override
-    public Expression visitParenExpr(VYPParser.ParenExprContext ctx) {
-        return (Expression) visit(ctx.expr());
-    }
-
 }

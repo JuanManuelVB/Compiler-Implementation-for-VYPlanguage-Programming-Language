@@ -8,15 +8,19 @@ public class Parameter extends ASTNode {
     private String name;
     private Type type;
 
-
     public Parameter(String name, Type type, SourceLocation loc) {
         super(loc);
         this.name = name;
         this.type = type;
     }
 
-    public String getName() { return name; }
-    public Type getType() { return type; }
+    public String getName() {
+        return name;
+    }
+
+    public Type getType() {
+        return type;
+    }
 
     @Override
     public <T> T accept(ASTVisitor<T> visitor) {

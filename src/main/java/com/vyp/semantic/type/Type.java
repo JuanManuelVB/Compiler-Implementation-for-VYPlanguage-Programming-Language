@@ -2,20 +2,26 @@ package com.vyp.semantic.type;
 
 public class Type {
 
-    private String typeName;
-
-    public Type(String typeName) {
-        this.typeName = typeName;
+    public enum BasicType {
+        INT, STRING, VOID, ERROR
     }
 
-    public String getName() {
-        return typeName;
+    private BasicType basicType;
+
+    public Type(BasicType basicType) {
+        this.basicType = basicType;
+    }
+
+    public BasicType getBasicType() {
+        return basicType;
+    }
+
+    public boolean isErrorType() {
+        return basicType == BasicType.ERROR;
     }
 
     @Override
     public String toString() {
-        return typeName;
+        return basicType.name().toLowerCase();
     }
-    
-    
 }

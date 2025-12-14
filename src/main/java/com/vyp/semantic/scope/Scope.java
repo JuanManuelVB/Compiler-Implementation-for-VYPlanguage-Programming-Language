@@ -1,6 +1,6 @@
 package com.vyp.semantic.scope;
 
-import com.vyp.semantic.symbol.Symbol;
+import com.vyp.semantic.scope.Symbol;
 import java.util.Map;
 import java.util.Optional;
 

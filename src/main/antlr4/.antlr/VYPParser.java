@@ -1,4 +1,4 @@
-// Generated from c:/Users/Juan Manuel/OneDrive - UNIVERSIDAD DE SEVILLA/UNI/eramus/compilers construction/Compiler Implementation for VYPlanguage Programming Language/src/main/antlr4/VYP.g4 by ANTLR 4.13.1
+// Generated from d:/sara/trabajos/UNIOVI/TERCERO/erasmus/asignaturas/dlp/compilers/Compiler-Implementation-for-VYPlanguage-Programming-Language/src/main/antlr4/VYP.g4 by ANTLR 4.13.1
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;

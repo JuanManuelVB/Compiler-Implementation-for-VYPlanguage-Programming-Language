@@ -1,67 +1,78 @@
 
 package com.vyp.semantic.scope;
 
-import com.vyp.semantic.symbol.Symbol;
-import com.vyp.util.Position;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import com.vyp.frontend.ast.SourceLocation;
 
-/** Scope enlazado (bloque o función). */
 public class SymbolTable implements Scope {
-    private final String scopeName;
-    private final Scope enclosingScope;
-    private final Map<String, Symbol> symbols = new LinkedHashMap<>();
+    private final String name;
+    private final Scope parent;
+    private final Map<String, Symbol> symbols = new HashMap<>();
 
-    public SymbolTable(String scopeName, Scope enclosingScope) {
-        this.scopeName = Objects.requireNonNull(scopeName);
-        this.enclosingScope = enclosingScope; // puede ser null (global)
+    public SymbolTable(String name, Scope parent) {
+        this.name = name;
+        this.parent = parent; // null si es el scope global
     }
 
-    public SymbolTable(String scopeName) {
-        this(scopeName, null);
+    public SymbolTable(String name) {
+        this(name, null);
     }
 
     @Override
-    public String getScopeName() { return scopeName; }
+    public String getScopeName() {
+        return name;
+    }
 
     @Override
-    public Scope getEnclosingScope() { return enclosingScope; }
+    public Scope getEnclosingScope() {
+        return parent;
+    }
 
-    /** Define símbolo en este scope; si ya existe localmente, lanza excepción para que el caller reporte error 14. */
     @Override
     public void define(Symbol sym) {
-        String name = sym.getName();
-        if (symbols.containsKey(name)) {
+        String symbolName = sym.getName();
+        if (symbols.containsKey(symbolName)) {
             throw new DuplicateSymbolException(
-                "Redefinición en el mismo ámbito '" + scopeName + "': " + name,
-                sym.getPosition() // asegura que Symbol tiene Position
-            );
+                "Ya existe un símbolo con ese nombre en este scope: " + symbolName, sym.getLocation());
         }
-        symbols.put(name, sym);
+        symbols.put(symbolName, sym);
     }
 
-    /** Resolución desde este scope hacia los padres. Nunca retorna null: usa Optional. */
     @Override
-    public Optional<Symbol> resolve(String name) {
-        for (Scope s = this; s != null; s = s.getEnclosingScope()) {
-            if (s.isDefined(name)) {
-                return Optional.of(s.entries().get(name));
-            }
-        }
+    public Optional<Symbol> resolve(String symbolName) {
+        Symbol sym = symbols.get(symbolName);
+        if (sym != null) return Optional.of(sym);
+        if (parent != null) return parent.resolve(symbolName);
         return Optional.empty();
     }
 
     @Override
-    public boolean isDefined(String name) { return symbols.containsKey(name); }
+    public boolean isDefined(String symbolName) {
+        return symbols.containsKey(symbolName);
+    }
 
-    /** Vista inmutable para debugging/inspección. */
     @Override
-    public Map<String, Symbol> entries() { return Collections.unmodifiableMap(symbols); }
+    public Map<String, Symbol> entries() {
+        return Collections.unmodifiableMap(symbols);
+    }
 }
 
-/** Excepción para duplicidades locales; el SemanticAnalyzer debe atraparla y reportar exit code 14. */
+/**
+ * Exception for local duplicates; SemanticAnalyzer should catch it
+ */
 class DuplicateSymbolException extends RuntimeException {
-    private final Position pos;
-    public DuplicateSymbolException(String msg, Position pos) { super(msg); this.pos = pos; }
-    public Position getPosition() { return pos; }
+    private final SourceLocation loc;
+
+    public DuplicateSymbolException(String msg, SourceLocation location) {
+        super(msg);
+        this.loc = location;
+    }
+
+    public SourceLocation getLocation() {
+        return loc;
+    }
 }
