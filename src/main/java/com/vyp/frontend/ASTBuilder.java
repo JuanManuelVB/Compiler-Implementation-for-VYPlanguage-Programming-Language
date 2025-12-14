@@ -6,8 +6,8 @@ import java.util.List;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 
-import com.vyp.antlr4.VYPBaseVisitor;
-import com.vyp.antlr4.VYPParser;
+import com.vyp.frontend.antlr4.VYPBaseVisitor;
+import com.vyp.frontend.antlr4.VYPParser;
 import com.vyp.frontend.ast.ASTNode;
 import com.vyp.frontend.ast.FunctionDecl;
 import com.vyp.frontend.ast.Parameter;

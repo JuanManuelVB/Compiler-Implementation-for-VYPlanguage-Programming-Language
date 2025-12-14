@@ -5,16 +5,16 @@ import java.util.List;
 import com.vyp.frontend.ast.SourceLocation;
 import com.vyp.semantic.type.Type;
 
-public final class Symbol {
+public class Symbol {
     public enum Kind {
         VARIABLE, FUNCTION
     }
 
-    private final String name;
-    private final Kind kind;
-    private final Type type; // variable: type; function: return type
-    private final List<Type> paramTypes; // if kind == FUNCTION
-    private final SourceLocation location;
+    private String name;
+    private Kind kind;
+    private Type type; // variable: type; function: return type
+    private List<Type> paramTypes; // if kind == FUNCTION
+    private SourceLocation location;
 
     public static Symbol variable(String name, Type type, SourceLocation location) {
         return new Symbol(name, Kind.VARIABLE, type, null, location);

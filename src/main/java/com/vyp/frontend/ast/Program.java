@@ -1,7 +1,6 @@
 package com.vyp.frontend.ast;
 
 import com.vyp.frontend.ASTVisitor;
-import com.vyp.frontend.ast.FunctionDecl;
 import java.util.List;
 
 public class Program extends ASTNode {
