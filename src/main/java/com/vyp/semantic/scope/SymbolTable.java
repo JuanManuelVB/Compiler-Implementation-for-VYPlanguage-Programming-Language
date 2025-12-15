@@ -5,74 +5,60 @@ package com.vyp.semantic.scope;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-import com.vyp.frontend.ast.SourceLocation;
 
-public class SymbolTable implements Scope {
-    private String name;
-    private Scope parent;
+
+public class SymbolTable {
+    private SymbolTable parent;
     private Map<String, Symbol> symbols = new HashMap<>();
 
-    public SymbolTable(String name, Scope parent) {
-        this.name = name;
+    public SymbolTable(SymbolTable parent) {
         this.parent = parent; // null if global scope
     }
 
-    public SymbolTable(String name) {
-        this(name, null);
+    public SymbolTable() {
+        this.parent = null; // null if global scope
     }
 
-    @Override
-    public String getScopeName() {
-        return name;
+    public void enterScope() {
+        SymbolTable child = new SymbolTable(this);
+        this.symbols = child.symbols;
+        this.parent = child.parent;
     }
 
-    @Override
-    public Scope getEnclosingScope() {
-        return parent;
+    public void exitScope() {
+        if (parent != null) {
+            this.symbols = parent.symbols;
+            this.parent = parent.parent;
+        }
     }
 
-    @Override
-    public void addToScope(Symbol sym) {
+    public boolean addToScope(Symbol sym) {
         String symbolName = sym.getName();
         if (symbols.containsKey(symbolName)) {
-            throw new DuplicateSymbolException(
-                "A symbol with the name " + symbolName + " already exists in this scope - ", sym.getLocation());
+            return false;
         }
         symbols.put(symbolName, sym);
+        return true;
     }
 
-    @Override
-    public Optional<Symbol> resolve(String symbolName) {
-        Symbol sym = symbols.get(symbolName);
-        if (sym != null) return Optional.of(sym);
-        if (parent != null) return parent.resolve(symbolName);
-        return Optional.empty();
+    public Symbol resolve(String name) {
+        SymbolTable symbolTable = this;
+        while (symbolTable != null) {
+            Symbol sym = symbolTable.symbols.get(name);
+            if (sym != null) return sym;
+            symbolTable = symbolTable.parent;
+        }
+        return null;
     }
 
-    @Override
     public boolean isDefined(String symbolName) {
         return symbols.containsKey(symbolName);
     }
 
-    @Override
+
     public Map<String, Symbol> localEntries() {
         return Collections.unmodifiableMap(symbols);
     }
 }
 
-/**
- * Exception for local duplicates; SemanticAnalyzer should catch it
- */
-class DuplicateSymbolException extends RuntimeException {
-    private final SourceLocation loc;
 
-    public DuplicateSymbolException(String msg, SourceLocation location) {
-        super(msg);
-        this.loc = location;
-    }
-
-    public SourceLocation getLocation() {
-        return loc;
-    }
-}

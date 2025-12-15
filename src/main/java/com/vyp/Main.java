@@ -1,11 +1,9 @@
 package com.vyp;
 
-import com.vyp.frontend.DebugVisitor;
 import com.vyp.frontend.ast.SourceLocation;
 import com.vyp.frontend.ast.expr.BinaryOp;
 import com.vyp.frontend.ast.expr.Expression;
 import com.vyp.frontend.ast.expr.IntLiteral;
-
 
 public class Main {
     
@@ -18,7 +16,8 @@ public static void main(String[] args) {
     );
 
     System.out.println("Salida: " + e); // debe imprimir algo coherente
-    System.out.println(e.accept(new DebugVisitor()));
+
+
 
 }
 

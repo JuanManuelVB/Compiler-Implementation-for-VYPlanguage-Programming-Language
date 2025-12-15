@@ -38,6 +38,11 @@ public class FunctionDecl extends ASTNode {
     }
 
     @Override
+    public SourceLocation getLocation() {
+        return super.getLocation();
+    }
+
+    @Override
     public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);
     }

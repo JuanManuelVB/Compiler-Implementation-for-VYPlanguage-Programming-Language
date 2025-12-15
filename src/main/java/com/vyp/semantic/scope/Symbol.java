@@ -56,4 +56,8 @@ public class Symbol {
     public boolean isFunction() {
         return kind == Kind.FUNCTION && paramTypes != null;
     }
+
+    public void setKind(Kind kindOfSymbol) {
+       this.kind = kindOfSymbol;
+    }
 }

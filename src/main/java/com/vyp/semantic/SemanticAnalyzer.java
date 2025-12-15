@@ -1,10 +1,15 @@
 package com.vyp.semantic;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.vyp.frontend.ASTVisitor;
 import com.vyp.frontend.ast.*;
 import com.vyp.frontend.ast.expr.*;
 import com.vyp.frontend.ast.stmt.*;
+import com.vyp.semantic.scope.Symbol;
+import com.vyp.semantic.scope.Symbol.Kind;
 import com.vyp.semantic.scope.SymbolTable;
-import com.vyp.semantic.scope.*;
 import com.vyp.semantic.type.*;
 import com.vyp.util.ErrorReporter;
 
@@ -13,34 +18,48 @@ public class SemanticAnalyzer implements ASTVisitor<Type> {
     private SymbolTable table = new SymbolTable();
     private ErrorReporter errors;
 
-    private FunctionSymbol currentFunction = null;
+    private Symbol currentFunction = null;
 
     public SemanticAnalyzer(ErrorReporter errors) {
         this.errors = errors;
+        this.currentFunction.setKind(Symbol.Kind.FUNCTION);
     }
 
-    /* ================= PROGRAM ================= */
-
+    /* PROGRAM */
     @Override
     public Type visit(Program p) {
 
-        // 1. Registrar funciones
+        // 1. Register functions
         for (FunctionDecl f : p.getFunctions()) {
-            if (!table.defineFunction(
-                    new FunctionSymbol(f.getName(), f.getReturnType(), f.getParams()))) {
+
+            List<Type> ParameterTypes = new ArrayList<>();
+            for (Parameter param : f.getParams()) {
+                ParameterTypes.add(param.getType());
+            }
+
+            Symbol fun = Symbol.function(
+                    f.getName(),
+                    f.getReturnType(),
+                    ParameterTypes,
+                    f.getLocation());
+
+            if (!table.addToScope(fun)) {
                 errors.error(f.getLocation(),
-                        "Function already defined: " + f.getName());
+                        "Function already addToScoped: " + f.getName());
             }
         }
 
-        // 2. Comprobar main
-        FunctionSymbol main = table.resolveFunction("main");
-        if (main == null || !main.getReturnType().equals(IntType.INSTANCE)) {
+        // 2. Checks for main function
+        Symbol main = table.resolve("main");
+        if (main == null
+                || main.getKind() != Symbol.Kind.FUNCTION
+                || !main.getType().equals(IntType.INSTANCE)) {
+
             errors.error(p.getLocation(),
-                    "Program must define: int main()");
+                    "Program must addToScope: int main()");
         }
 
-        // 3. Analizar cuerpos
+        // 3. Analyze function bodies
         for (FunctionDecl f : p.getFunctions()) {
             f.accept(this);
         }
@@ -48,19 +67,23 @@ public class SemanticAnalyzer implements ASTVisitor<Type> {
         return VoidType.INSTANCE;
     }
 
-    /* ================= FUNCTION ================= */
-
+    /* FUNCTION */
     @Override
     public Type visit(FunctionDecl f) {
 
-        currentFunction = table.resolveFunction(f.getName());
+        currentFunction = table.resolve(f.getName());
         table.enterScope();
 
         // parámetros
-        for (Param p : f.getParams()) {
-            if (!table.define(new VariableSymbol(p.getName(), p.getType()))) {
+        for (Parameter p : f.getParams()) {
+            Symbol var = Symbol.variable(
+                    p.getName(),
+                    p.getType(),
+                    p.getLocation());
+
+            if (!table.addToScope(var)) {
                 errors.error(p.getLocation(),
-                        "Duplicate parameter: " + p.getName());
+                        "Duplicate Parametereter: " + p.getName());
             }
         }
 
@@ -71,42 +94,45 @@ public class SemanticAnalyzer implements ASTVisitor<Type> {
         return VoidType.INSTANCE;
     }
 
-    /* ================= BLOCK ================= */
+    /* BLOCK */
 
-    @Override
     public Type visit(BlockStmt b) {
         table.enterScope();
-        for (Stmt s : b.getStatements()) {
+        for (Statement s : b.getStatements()) {
             s.accept(this);
         }
         table.exitScope();
         return VoidType.INSTANCE;
     }
 
-    /* ================= STATEMENTS ================= */
-
+    /* STATEMENTS */
     @Override
     public Type visit(VarDeclStmt s) {
-        for (String name : s.getNames()) {
-            if (!table.define(new VariableSymbol(name, s.getType()))) {
+        for (String name : s.getVarNames()) {
+            Symbol var = Symbol.variable(
+                    name,
+                    s.getType(),
+                    s.getLocation());
+
+            if (!table.addToScope(var)) {
                 errors.error(s.getLocation(),
                         "Variable already declared: " + name);
             }
         }
         return VoidType.INSTANCE;
     }
-
     @Override
     public Type visit(AssignStmt s) {
         Symbol sym = table.resolve(s.getName());
-        if (sym == null) {
+
+        if (sym == null || sym.getKind() != Kind.VARIABLE) {
             errors.error(s.getLocation(),
                     "Variable not declared: " + s.getName());
             return IntType.INSTANCE;
         }
 
-        Type exprType = s.getExpr().accept(this);
-        if (!sym.getType().equals(exprType)) {
+        Type rhs = s.getValue().accept(this);
+        if (!sym.getType().equals(rhs)) {
             errors.error(s.getLocation(),
                     "Type mismatch in assignment to " + s.getName());
         }
@@ -116,13 +142,14 @@ public class SemanticAnalyzer implements ASTVisitor<Type> {
 
     @Override
     public Type visit(ReturnStmt s) {
-        Type ret = (s.getExpr() == null)
+        Type ret = (s.getValue() == null)
                 ? VoidType.INSTANCE
-                : s.getExpr().accept(this);
+                : s.getValue().accept(this);
 
-        if (!ret.equals(currentFunction.getReturnType())) {
+        if (!ret.equals(currentFunction.getType())) {
             errors.error(s.getLocation(),
-                    "Wrong return type in function " + currentFunction.getName());
+                    "Wrong return type in function " +
+                            currentFunction.getName());
         }
         return VoidType.INSTANCE;
     }
@@ -133,9 +160,9 @@ public class SemanticAnalyzer implements ASTVisitor<Type> {
             errors.error(s.getLocation(),
                     "If condition must be int");
         }
-        s.getThenBlock().accept(this);
-        if (s.getElseBlock() != null)
-            s.getElseBlock().accept(this);
+        s.getIfTrue().accept(this);
+        if (s.getIfFalse() != null)
+            s.getIfFalse().accept(this);
         return VoidType.INSTANCE;
     }
 
@@ -155,8 +182,7 @@ public class SemanticAnalyzer implements ASTVisitor<Type> {
         return VoidType.INSTANCE;
     }
 
-    /* ================= EXPRESSIONS ================= */
-
+    /* EXPRESSIONS */
     @Override
     public Type visit(IntLiteral e) {
         return IntType.INSTANCE;
@@ -170,7 +196,7 @@ public class SemanticAnalyzer implements ASTVisitor<Type> {
     @Override
     public Type visit(Var e) {
         Symbol sym = table.resolve(e.getName());
-        if (sym == null) {
+        if (sym == null || sym.getKind() != Symbol.Kind.VARIABLE) {
             errors.error(e.getLocation(),
                     "Variable not declared: " + e.getName());
             return IntType.INSTANCE;
@@ -180,28 +206,31 @@ public class SemanticAnalyzer implements ASTVisitor<Type> {
 
     @Override
     public Type visit(FunctionCallExpr e) {
-        FunctionSymbol f = table.resolveFunction(e.getName());
-        if (f == null) {
+        Symbol fun = table.resolve(e.getFunctionName());
+
+        if (fun == null || fun.getKind() != Symbol.Kind.FUNCTION) {
             errors.error(e.getLocation(),
-                    "Function not declared: " + e.getName());
+                    "Function not declared: " + e.getFunctionName());
             return IntType.INSTANCE;
         }
 
-        if (f.getParams().size() != e.getArgs().size()) {
+        if (fun.getParamTypes().size() != e.getArguments().size()) {
             errors.error(e.getLocation(),
-                    "Wrong number of arguments in call to " + e.getName());
+                    "Wrong number of arguments in call to " + e.getFunctionName());
         }
 
-        for (int i = 0; i < Math.min(f.getParams().size(), e.getArgs().size()); i++) {
-            Type expected = f.getParams().get(i).getType();
-            Type actual = e.getArgs().get(i).accept(this);
+        for (int i = 0; i < Math.min(fun.getParamTypes().size(), e.getArguments().size()); i++) {
+
+            Type expected = fun.getParamTypes().get(i);
+            Type actual = e.getArguments().get(i).accept(this);
+
             if (!expected.equals(actual)) {
-                errors.error(e.getArgs().get(i).getLocation(),
+                errors.error(e.getArguments().get(i).getLocation(),
                         "Argument type mismatch");
             }
         }
 
-        return f.getReturnType();
+        return fun.getType(); // return type
     }
 
     @Override
@@ -216,8 +245,9 @@ public class SemanticAnalyzer implements ASTVisitor<Type> {
         return l;
     }
 
-    @Override
     public Type visit(UnaryOp e) {
-        return e.getExpr().accept(this);
+        return e.getExpression().accept(this);
     }
+    
+
 }

@@ -8,7 +8,7 @@ import org.antlr.v4.runtime.Token;
 
 import com.vyp.frontend.antlr4.VYPBaseVisitor;
 import com.vyp.frontend.antlr4.VYPParser;
-import com.vyp.frontend.ast.ASTNode;
+import org.antlr.v4.runtime.tree.TerminalNode;
 import com.vyp.frontend.ast.FunctionDecl;
 import com.vyp.frontend.ast.Parameter;
 import com.vyp.frontend.ast.Program;

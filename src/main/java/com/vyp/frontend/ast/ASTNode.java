@@ -1,7 +1,8 @@
 package com.vyp.frontend.ast;
 
 import com.vyp.frontend.ASTVisitor;
-import com.vyp.frontend.ast.SourceLocation;	
+import com.vyp.frontend.ast.SourceLocation;
+	
 
 public abstract class ASTNode {
 
@@ -15,7 +16,7 @@ public abstract class ASTNode {
 	 * Get source location
 	 * @return the location (line and column) in the source code
 	 */
-	public SourceLocation getSourceLocation(){
+	public SourceLocation getLocation(){
 		return location;
 	}
 	
