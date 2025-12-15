@@ -16,7 +16,20 @@ import com.vyp.codegen.CodeGenerator;
 
 public class TestCodegen {
     public static void main(String[] args) throws Exception {
-        Path src =Path.of("examples", "factorial.vyp");
+        // Usage: TestCodegen [input.vyp] [output.vypcode]
+        Path src;
+        Path out = null;
+
+        if (args.length >= 1) {
+            src = Path.of(args[0]);
+        } else {
+            src = Path.of("examples", "factorial.vyp");
+        }
+
+        if (args.length >= 2) {
+            out = Path.of(args[1]);
+        }
+
         String input = Files.readString(src);
 
         CharStream cs = CharStreams.fromString(input);
@@ -33,6 +46,14 @@ public class TestCodegen {
         Program program = (Program) new ASTBuilder().visitProgram(ctx);
         List<String> code = new CodeGenerator().generate(program);
 
-        code.forEach(System.out::println);
+        if (out != null) {
+            // ensure parent directory exists
+            Path parent = out.getParent();
+            if (parent != null) Files.createDirectories(parent);
+            Files.writeString(out, String.join(System.lineSeparator(), code));
+            System.err.println("Wrote generated VYPcode to: " + out.toString());
+        } else {
+            code.forEach(System.out::println);
+        }
     }
 }

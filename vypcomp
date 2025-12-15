@@ -1,0 +1,47 @@
+BASEDIR=$(cd "$(dirname "$0")" && pwd)
+cd "$BASEDIR"
+
+if [ "$#" -lt 1 ]; then
+  echo "Usage: $0 input.vyp [output.vypcode]" >&2
+  exit 20
+fi
+
+INPUT="$1"
+OUTPUT="$2"
+
+JAVA=${JAVA:-java}
+ANTLR_JAR="libs/antlr4-runtime-4.13.1.jar"
+
+# Build project
+make -s
+if [ $? -ne 0 ]; then
+  echo "Build failed." >&2
+  exit 30
+fi
+
+# Compute default output if not provided
+if [ -z "$OUTPUT" ]; then
+  base=$(basename "$INPUT")
+  name="${base%.*}"
+  OUTPUT="generated/${name}.vypcode"
+fi
+
+mkdir -p "$(dirname "$OUTPUT")"
+
+CP="bin:$ANTLR_JAR"
+
+# Run TestCodegen to produce the VYPcode file
+$JAVA -cp "$CP" com.vyp.TestCodegen "$INPUT" "$OUTPUT"
+rc=$?
+if [ $rc -ne 0 ]; then
+  echo "TestCodegen failed (exit $rc)" >&2
+  exit $rc
+fi
+
+# Run the interpreter on the generated file
+if [ ! -f "vypint-1.0.jar" ]; then
+  echo "Warning: vypint-1.0.jar not found in project root; please provide the interpreter jar." >&2
+fi
+
+$JAVA -jar vypint-1.0.jar "$OUTPUT"
+exit $?

@@ -21,7 +21,6 @@ import com.vyp.frontend.ast.stmt.ReturnStmt;
 import com.vyp.frontend.ast.stmt.Statement;
 import com.vyp.frontend.ast.stmt.VarDeclStmt;
 import com.vyp.frontend.ast.stmt.WhileStmt;
-import com.vyp.semantic.type.StringType;
 import com.vyp.util.ErrorReporter;
 
 // A simple code generator that produces VYPcode from the AST
@@ -258,15 +257,6 @@ public class CodeGenerator implements ASTVisitor<Void> {
     public Void visit(Parameter node) {
         return null;
     }
-
-
-
-
-   
-
-    
-
-
 
    
 }

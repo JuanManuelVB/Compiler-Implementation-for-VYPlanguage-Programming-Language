@@ -25,7 +25,7 @@ statement:
 block: LBRACE statement* RBRACE;
 
 /* Local variable definitions */
-localVarDecl: primitiveType IDENT (COMMA IDENT)* SEMI;
+localVarDecl: type IDENT (COMMA IDENT)* SEMI;
 
 assignStmt: IDENT ASSIGN expr SEMI;
 

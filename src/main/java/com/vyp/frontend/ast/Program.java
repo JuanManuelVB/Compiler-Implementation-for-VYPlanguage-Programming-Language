@@ -9,7 +9,7 @@ import java.util.List;
 public class Program extends ASTNode {
 
     private List<FunctionDecl> functions;//the list of function declarations in the program
-    private List<Var> globals; // the list of global variable declarations
+    private List<Var> globals; // the list of global variable
 
      /** Constructor for Program */
 
@@ -18,6 +18,12 @@ public class Program extends ASTNode {
         super(location);
         this.globals = globals;
         this.functions = functions;
+    }
+
+    public Program( List<FunctionDecl> functions, SourceLocation location) {
+    super(location);
+    this.globals = null;
+    this.functions = functions;
     }
 
     // Getter for functions
@@ -32,5 +38,4 @@ public class Program extends ASTNode {
     public <T> T accept(ASTVisitor<T> visitor) {
         return visitor.visit(this);
     }
-
 }
