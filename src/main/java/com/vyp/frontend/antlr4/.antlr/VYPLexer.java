@@ -1,4 +1,3 @@
-// Generated from c:/Users/Juan Manuel/OneDrive - UNIVERSIDAD DE SEVILLA/UNI/eramus/compilers construction/Compiler Implementation for VYPlanguage Programming Language/src/main/java/com/vyp/frontend/antlr4/VYP.g4 by ANTLR 4.13.1
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
