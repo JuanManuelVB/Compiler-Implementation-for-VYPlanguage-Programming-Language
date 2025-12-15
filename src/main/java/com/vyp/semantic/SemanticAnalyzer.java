@@ -248,6 +248,27 @@ public class SemanticAnalyzer implements ASTVisitor<Type> {
     public Type visit(UnaryOp e) {
         return e.getExpression().accept(this);
     }
+
+    @Override
+    public Type visit(Parameter node) {
+        // The type of a parameter is simply its declared type
+        return node.getType();
+    }
+
+    @Override
+    public Type visit(Expression node) {
+        // Dispatch to the concrete expression visitor based on runtime type.
+        if (node instanceof IntLiteral) return visit((IntLiteral) node);
+        if (node instanceof StringLiteral) return visit((StringLiteral) node);
+        if (node instanceof Var) return visit((Var) node);
+        if (node instanceof BinaryOp) return visit((BinaryOp) node);
+        if (node instanceof UnaryOp) return visit((UnaryOp) node);
+        if (node instanceof FunctionCallExpr) return visit((FunctionCallExpr) node);
+
+        // Unknown expression kind: report and return error type
+        errors.error(node.getLocation(), "Unsupported expression node: " + node.getClass().getSimpleName());
+        return ErrorType.INSTANCE;
+    }
     
 
 }
