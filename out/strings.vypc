@@ -1,0 +1,68 @@
+
+; -- data section --
+; -- end data --
+
+DATA STR6, "\", is "
+DATA STR5, "\nThe length of \""
+DATA STR4, ""
+DATA STR3, "\n"
+DATA STR2, "\nthat can be a\nlittle longer."
+DATA STR1, "This\nis some text"
+LABEL main
+; local decl str1 : string
+; local decl str2 : string
+; local decl p : int
+SET $0, STR1
+SET str1, $0
+SET $0, str1
+SET $1, $0
+SET $0, STR2
+ADDI $0, $1, $0
+SET str2, $0
+SET $0, str1
+PUSH $0
+SET $0, str2
+PUSH $0
+CALL length
+PUSH $0
+SET $0, str2
+PUSH $0
+SET $0, STR3
+PUSH $0
+CALL print
+CALL readString
+SET str1, $0
+SET $0, 0
+SET p, $0
+LABEL __gen_while_start_1
+SET $0, str1
+PUSH $0
+SET $0, p
+PUSH $0
+SET $0, 1
+PUSH $0
+CALL subStr
+SET $1, $0
+SET $0, STR4
+EQI $1, $1, $0
+NOT $0, $1
+JZ $0, __gen_while_end_2
+SET $0, p
+SET $1, $0
+SET $0, 1
+ADDI $0, $1, $0
+SET p, $0
+JMP __gen_while_start_1
+LABEL __gen_while_end_2
+SET $0, STR5
+PUSH $0
+SET $0, str1
+PUSH $0
+SET $0, STR6
+PUSH $0
+SET $0, p
+PUSH $0
+SET $0, STR3
+PUSH $0
+CALL print
+RETURN [$SP]
