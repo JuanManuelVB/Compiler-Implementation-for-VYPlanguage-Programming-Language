@@ -14,10 +14,7 @@ import com.vyp.frontend.ast.stmt.AssignStmt;
 import com.vyp.frontend.ast.stmt.BlockStmt;
 import com.vyp.frontend.ast.stmt.ReturnStmt;
 
-/**
- * VYPa – Code Generator (versión mínima y humana)
- * Genera VYPcode directamente desde el AST usando Visitor.
- */
+
 public class CodeGenerator implements ASTVisitor<Void> {
 
     private final List<String> code = new ArrayList<>();
