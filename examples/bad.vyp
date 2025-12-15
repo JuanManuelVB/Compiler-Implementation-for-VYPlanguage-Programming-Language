@@ -1,0 +1,6 @@
+// Deliberate syntax error: incomplete expression after '+'
+int main(void) {
+    int x;
+    x = 1 + ;
+    return x;
+}
