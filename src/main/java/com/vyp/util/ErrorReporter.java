@@ -28,6 +28,8 @@ public class ErrorReporter {
         }
     }
 
+
+    // Specific exception types for different compiler phases
     public static class LexicalException extends CompilerException {
         public LexicalException(String msg, SourceLocation loc) {
             super(msg, loc, ExitCodes.LEXICAL_ERROR);
@@ -89,11 +91,12 @@ public class ErrorReporter {
         throw new InternalException(format(msg, loc, ExitCodes.INTERNAL_ERROR), loc);
     }
 
-    // Backwards-compatible API: generic error -> semantic other
+    //Method for generic error 
     public void error(SourceLocation location, String string) {
         semantic(location, string);
     }
 
+    // Helper method to format error messages
     private String format(String msg, SourceLocation loc, int exitCode) {
         String locPrefix = (loc != null ? ("Error at " + loc + ": ") : "Error: ");
         String codeSuffix = exitCode >= 0 ? (" [code=" + exitCode + "]") : "";

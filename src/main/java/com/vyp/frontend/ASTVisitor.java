@@ -18,6 +18,9 @@ import com.vyp.frontend.ast.stmt.VarDeclStmt;
 import com.vyp.frontend.ast.stmt.WhileStmt;
 import com.vyp.frontend.ast.Parameter;
 
+// (Visitor design pattern is a way of separating an algorithm from an object structure on which it operates,
+// and it allows adding new operations to existing object structures without modifying those structures. */
+// One visit method must be defined for each concrete AST node class.
 public interface ASTVisitor<T> {
 
     // Program

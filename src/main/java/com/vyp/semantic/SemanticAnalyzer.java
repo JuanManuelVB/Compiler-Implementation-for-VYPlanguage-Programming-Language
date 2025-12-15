@@ -13,13 +13,19 @@ import com.vyp.semantic.scope.SymbolTable;
 import com.vyp.semantic.type.*;
 import com.vyp.util.ErrorReporter;
 
+
+/** SemanticAnalyzer performs semantic analysis on the AST
+It checks for variable/function declarations, type checking, and scope management
+Even tough the grammar correctness is guaranteed by the parser, this class ensures the semantic correctness of the program
+Such as variables being declared before use, function calls with correct number and types of arguments, etc.*/
+
 public class SemanticAnalyzer implements ASTVisitor<Type> {
 
-    private SymbolTable table = new SymbolTable();
-    private ErrorReporter errors;
+    private SymbolTable table = new SymbolTable();// symbol table for scope management
+    private ErrorReporter errors; // error reporter for reporting semantic errors
+    private Symbol currentFunction = null; // current function being analyzed
 
-    private Symbol currentFunction = null;
-
+     /** Constructor for SemanticAnalyzer */
     public SemanticAnalyzer(ErrorReporter errors) {
         this.errors = errors;
         this.currentFunction.setKind(Symbol.Kind.FUNCTION);
@@ -32,20 +38,20 @@ public class SemanticAnalyzer implements ASTVisitor<Type> {
         // 1. Register functions
         for (FunctionDecl f : p.getFunctions()) {
 
-            List<Type> ParameterTypes = new ArrayList<>();
+            List<Type> parameterTypes = new ArrayList<>();
             for (Parameter param : f.getParams()) {
-                ParameterTypes.add(param.getType());
+                parameterTypes.add(param.getType());
             }
 
             Symbol fun = Symbol.function(
                     f.getName(),
                     f.getReturnType(),
-                    ParameterTypes,
+                    parameterTypes,
                     f.getLocation());
 
             if (!table.addToScope(fun)) {
-                errors.error(f.getLocation(),
-                        "Function already addToScoped: " + f.getName());
+                errors.semantic(f.getLocation(),
+                        "Function" + f.getName() + " already exists in the scope: ");
             }
         }
 
