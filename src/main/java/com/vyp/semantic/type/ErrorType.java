@@ -1,6 +1,5 @@
 package com.vyp.semantic.type;
 
-import com.vyp.semantic.type.Type.BasicType;
 
 public class ErrorType extends Type {
  
