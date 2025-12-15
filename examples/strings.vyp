@@ -1,0 +1,14 @@
+/* Program 3: Program using Strings and Embedded Functions */
+void main(void) {
+    string str1, str2;
+    int p;
+    str1 = "This\nis some text";
+    str2 = str1 + "\nthat can be a\nlittle longer.";
+    print(str1, length(str2), str2, "\n");
+    str1 = readString();
+    p = 0;
+    while ((subStr(str1, p, 1)) != "") {
+        p = p + 1;
+    } // end of while
+    print("\nThe length of \"", str1, "\", is ", p, "\n");
+} // end of main

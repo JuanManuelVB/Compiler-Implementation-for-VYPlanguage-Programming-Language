@@ -240,8 +240,8 @@ public class CodeGenerator implements ASTVisitor<Void> {
 
     @Override
     public Void visit(IfStmt s) {
-        String elseL = labels.fresh();
-        String endL = labels.fresh();
+        String elseL = labels.fresh("if_else");
+        String endL = labels.fresh("if_end");
 
         s.getCondition().accept(this); // result in $0
         code.add("JZ $0, " + elseL);
@@ -262,8 +262,8 @@ public class CodeGenerator implements ASTVisitor<Void> {
 
     @Override
     public Void visit(WhileStmt s) {
-        String start = labels.fresh();
-        String end = labels.fresh();
+        String start = labels.fresh("while_start");
+        String end = labels.fresh("while_end");
         code.add("LABEL " + start);
         s.getCondition().accept(this);
         code.add("JZ $0, " + end);

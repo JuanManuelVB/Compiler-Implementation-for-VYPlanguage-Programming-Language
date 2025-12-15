@@ -9,8 +9,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class LabelManager {
     private final AtomicInteger counter = new AtomicInteger(0);
 
-    /** Return a fresh label name (e.g. L1, L2...). */
+    /**
+     * Return a fresh label with a short default purpose prefix.
+     * Example: __gen_L_1
+     */
     public String fresh() {
-        return "L" + counter.incrementAndGet();
+        return fresh("L");
+    }
+
+    /**
+     * Return a fresh label using a purpose-based prefix. The purpose string
+     * is sanitized (non-alphanumeric turned to '_') and truncated to keep
+     * labels readable. Example: __gen_if_1 or __gen_while_end_5
+     */
+    public String fresh(String purpose) {
+        String p = (purpose == null) ? "gen" : purpose.replaceAll("[^A-Za-z0-9_]", "_");
+        if (p.length() > 20) p = p.substring(0, 20);
+        return "__gen_" + p + "_" + counter.incrementAndGet();
     }
 }
