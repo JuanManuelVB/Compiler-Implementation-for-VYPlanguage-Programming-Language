@@ -14,7 +14,7 @@ try {
     exit 1
 }
 
-$antlrVersion = '4.9.3'
+$antlrVersion = '4.13.1'
 $libDir = Join-Path $scriptRoot 'libs'
 if (-Not (Test-Path $libDir)) { New-Item -ItemType Directory -Path $libDir | Out-Null }
 

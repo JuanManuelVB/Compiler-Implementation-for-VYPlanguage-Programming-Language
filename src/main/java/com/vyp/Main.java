@@ -17,6 +17,7 @@ public static void main(String[] args) {
 
     System.out.println("Salida: " + e); // debe imprimir algo coherente
 
+    /*Test que compruebe que funciona ast builder y symbol table */
 
 
 }

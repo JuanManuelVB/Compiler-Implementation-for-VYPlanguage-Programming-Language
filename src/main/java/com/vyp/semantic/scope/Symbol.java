@@ -28,7 +28,11 @@ public class Symbol {
         this.name = name;
         this.kind = kind;
         this.type = type;
-        this.paramTypes = new java.util.ArrayList<>(paramTypes);
+        if (paramTypes == null) {
+            this.paramTypes = new java.util.ArrayList<>();
+        } else {
+            this.paramTypes = new java.util.ArrayList<>(paramTypes);
+        }
         this.location = location;
     }
 
