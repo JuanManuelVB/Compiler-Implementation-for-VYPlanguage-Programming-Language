@@ -1,0 +1,10 @@
+# Build and generated files
+/target/
+/out/
+
+# ANTLR temporary/generated copies
+/src/main/antlr4/.antlr/
+
+# IDE files
+.idea/
+*.iml

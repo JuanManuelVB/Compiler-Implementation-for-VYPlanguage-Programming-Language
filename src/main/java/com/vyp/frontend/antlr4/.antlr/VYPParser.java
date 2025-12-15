@@ -1,4 +1,4 @@
-// Generated from c:/Users/Juan Manuel/OneDrive - UNIVERSIDAD DE SEVILLA/UNI/eramus/compilers construction/Compiler Implementation for VYPlanguage Programming Language/src/main/antlr4/VYP.g4 by ANTLR 4.13.1
+// Generated from c:/Users/Juan Manuel/OneDrive - UNIVERSIDAD DE SEVILLA/UNI/eramus/compilers construction/Compiler Implementation for VYPlanguage Programming Language/src/main/java/com/vyp/frontend/antlr4/VYP.g4 by ANTLR 4.13.1
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -20,7 +20,7 @@ public class VYPParser extends Parser {
 		LBRACE=10, RBRACE=11, COMMA=12, SEMI=13, COLON=14, ASSIGN=15, NOT=16, 
 		STAR=17, SLASH=18, PLUS=19, MINUS=20, LTE=21, GTE=22, LT=23, GT=24, EQ=25, 
 		NEQ=26, AND=27, OR=28, INT_LITERAL=29, STRING_LITERAL=30, IDENT=31, WS=32, 
-		LINE_COMMENT=33, BLOCK_COMMENT=34, DATA_TYPE=35;
+		LINE_COMMENT=33, BLOCK_COMMENT=34;
 	public static final int
 		RULE_program = 0, RULE_functionDecl = 1, RULE_paramList = 2, RULE_param = 3, 
 		RULE_functionCallStmt = 4, RULE_statement = 5, RULE_block = 6, RULE_localVarDecl = 7, 
@@ -55,7 +55,7 @@ public class VYPParser extends Parser {
 			"RPAREN", "LBRACE", "RBRACE", "COMMA", "SEMI", "COLON", "ASSIGN", "NOT", 
 			"STAR", "SLASH", "PLUS", "MINUS", "LTE", "GTE", "LT", "GT", "EQ", "NEQ", 
 			"AND", "OR", "INT_LITERAL", "STRING_LITERAL", "IDENT", "WS", "LINE_COMMENT", 
-			"BLOCK_COMMENT", "DATA_TYPE"
+			"BLOCK_COMMENT"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -140,38 +140,23 @@ public class VYPParser extends Parser {
 			setState(54);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 38118958588L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 3759744508L) != 0)) {
 				{
 				setState(52);
 				_errHandler.sync(this);
-				switch (_input.LA(1)) {
-				case INT:
-				case STRING:
-				case VOID:
+				switch ( getInterpreter().adaptivePredict(_input,0,_ctx) ) {
+				case 1:
 					{
 					setState(50);
 					functionDecl();
 					}
 					break;
-				case IF:
-				case RETURN:
-				case WHILE:
-				case LPAREN:
-				case LBRACE:
-				case SEMI:
-				case NOT:
-				case MINUS:
-				case INT_LITERAL:
-				case STRING_LITERAL:
-				case IDENT:
-				case DATA_TYPE:
+				case 2:
 					{
 					setState(51);
 					statement();
 					}
 					break;
-				default:
-					throw new NoViableAltException(this);
 				}
 				}
 				setState(56);
@@ -384,7 +369,7 @@ public class VYPParser extends Parser {
 			setState(83);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 3759210752L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 3759735040L) != 0)) {
 				{
 				setState(82);
 				argList();
@@ -542,7 +527,7 @@ public class VYPParser extends Parser {
 			setState(102);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 38118958484L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 3759744444L) != 0)) {
 				{
 				{
 				setState(99);
@@ -570,7 +555,9 @@ public class VYPParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class LocalVarDeclContext extends ParserRuleContext {
-		public TerminalNode DATA_TYPE() { return getToken(VYPParser.DATA_TYPE, 0); }
+		public PrimitiveTypeContext primitiveType() {
+			return getRuleContext(PrimitiveTypeContext.class,0);
+		}
 		public List<TerminalNode> IDENT() { return getTokens(VYPParser.IDENT); }
 		public TerminalNode IDENT(int i) {
 			return getToken(VYPParser.IDENT, i);
@@ -594,7 +581,7 @@ public class VYPParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(107);
-			match(DATA_TYPE);
+			primitiveType();
 			setState(108);
 			match(IDENT);
 			setState(113);
@@ -803,7 +790,7 @@ public class VYPParser extends Parser {
 			setState(140);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 3759210752L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 3759735040L) != 0)) {
 				{
 				setState(139);
 				expr();
@@ -1289,6 +1276,7 @@ public class VYPParser extends Parser {
 		public UnaryExprContext unaryExpr() {
 			return getRuleContext(UnaryExprContext.class,0);
 		}
+		public TerminalNode PLUS() { return getToken(VYPParser.PLUS, 0); }
 		public TerminalNode MINUS() { return getToken(VYPParser.MINUS, 0); }
 		public TerminalNode NOT() { return getToken(VYPParser.NOT, 0); }
 		public PrimaryExprContext primaryExpr() {
@@ -1309,12 +1297,13 @@ public class VYPParser extends Parser {
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case NOT:
+			case PLUS:
 			case MINUS:
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(197);
 				_la = _input.LA(1);
-				if ( !(_la==NOT || _la==MINUS) ) {
+				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 1638400L) != 0)) ) {
 				_errHandler.recoverInline(this);
 				}
 				else {
@@ -1417,7 +1406,7 @@ public class VYPParser extends Parser {
 				setState(205);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 3759210752L) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 3759735040L) != 0)) {
 					{
 					setState(204);
 					argList();
@@ -1623,7 +1612,7 @@ public class VYPParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\u0004\u0001#\u00e8\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
+		"\u0004\u0001\"\u00e8\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
 		"\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004\u0002"+
 		"\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0002\u0007\u0007\u0007\u0002"+
 		"\b\u0007\b\u0002\t\u0007\t\u0002\n\u0007\n\u0002\u000b\u0007\u000b\u0002"+
@@ -1662,7 +1651,7 @@ public class VYPParser extends Parser {
 		"\u0000\u0019\u0000\u0002\u0004\u0006\b\n\f\u000e\u0010\u0012\u0014\u0016"+
 		"\u0018\u001a\u001c\u001e \"$&(*,.0\u0000\u0006\u0001\u0000\u0019\u001a"+
 		"\u0001\u0000\u0015\u0018\u0001\u0000\u0013\u0014\u0001\u0000\u0011\u0012"+
-		"\u0002\u0000\u0010\u0010\u0014\u0014\u0002\u0000\u0003\u0003\u0005\u0005"+
+		"\u0002\u0000\u0010\u0010\u0013\u0014\u0002\u0000\u0003\u0003\u0005\u0005"+
 		"\u00ed\u00006\u0001\u0000\u0000\u0000\u0002;\u0001\u0000\u0000\u0000\u0004"+
 		"E\u0001\u0000\u0000\u0000\u0006M\u0001\u0000\u0000\u0000\bP\u0001\u0000"+
 		"\u0000\u0000\n`\u0001\u0000\u0000\u0000\fb\u0001\u0000\u0000\u0000\u000e"+
@@ -1699,7 +1688,7 @@ public class VYPParser extends Parser {
 		"\n\u0000\u0000ce\u0003\n\u0005\u0000dc\u0001\u0000\u0000\u0000eh\u0001"+
 		"\u0000\u0000\u0000fd\u0001\u0000\u0000\u0000fg\u0001\u0000\u0000\u0000"+
 		"gi\u0001\u0000\u0000\u0000hf\u0001\u0000\u0000\u0000ij\u0005\u000b\u0000"+
-		"\u0000j\r\u0001\u0000\u0000\u0000kl\u0005#\u0000\u0000lq\u0005\u001f\u0000"+
+		"\u0000j\r\u0001\u0000\u0000\u0000kl\u00030\u0018\u0000lq\u0005\u001f\u0000"+
 		"\u0000mn\u0005\f\u0000\u0000np\u0005\u001f\u0000\u0000om\u0001\u0000\u0000"+
 		"\u0000ps\u0001\u0000\u0000\u0000qo\u0001\u0000\u0000\u0000qr\u0001\u0000"+
 		"\u0000\u0000rt\u0001\u0000\u0000\u0000sq\u0001\u0000\u0000\u0000tu\u0005"+

@@ -1,6 +1,5 @@
 grammar VYP;
 
-
 // The starting rule of the grammar
 program: ( functionDecl  | statement)* EOF;
 
@@ -26,7 +25,7 @@ statement:
 block: LBRACE statement* RBRACE;
 
 /* Local variable definitions */
-localVarDecl:DATA_TYPE IDENT (COMMA IDENT)* SEMI;
+localVarDecl: primitiveType IDENT (COMMA IDENT)* SEMI;
 
 assignStmt: IDENT ASSIGN expr SEMI;
 
@@ -68,7 +67,7 @@ multiplicativeExpr
 	;
 
 unaryExpr
-	: (MINUS | NOT) unaryExpr
+	: (PLUS | MINUS | NOT) unaryExpr
 	| primaryExpr
 	;
 

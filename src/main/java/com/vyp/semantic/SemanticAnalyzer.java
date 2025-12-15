@@ -246,7 +246,30 @@ public class SemanticAnalyzer implements ASTVisitor<Type> {
     }
 
     public Type visit(UnaryOp e) {
-        return e.getExpression().accept(this);
+        Type t = e.getExpression().accept(this);
+        switch (e.getOperator()) {
+            case PLUS:
+                // unary plus: must be numeric, no change
+                if (!t.equals(IntType.INSTANCE)) {
+                    errors.error(e.getLocation(), "Unary + requires int");
+                    return ErrorType.INSTANCE;
+                }
+                return IntType.INSTANCE;
+            case MINUS:
+                if (!t.equals(IntType.INSTANCE)) {
+                    errors.error(e.getLocation(), "Unary - requires int");
+                    return ErrorType.INSTANCE;
+                }
+                return IntType.INSTANCE;
+            case NOT:
+                if (!t.equals(IntType.INSTANCE)) {
+                    errors.error(e.getLocation(), "Unary ! requires int");
+                    return ErrorType.INSTANCE;
+                }
+                return IntType.INSTANCE;
+            default:
+                return ErrorType.INSTANCE;
+        }
     }
 
     @Override

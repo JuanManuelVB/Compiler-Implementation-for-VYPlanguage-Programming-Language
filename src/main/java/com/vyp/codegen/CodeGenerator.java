@@ -167,9 +167,21 @@ public class CodeGenerator implements ASTVisitor<Void> {
     @Override
     public Void visit(UnaryOp e) {
         e.getExpression().accept(this);
-        if (e.getOperator() == UnaryOp.UnaryOperator.NOT) {
-            // logical not: assume 0/1 semantics
-            code.add("NOT $0, $0");
+        switch (e.getOperator()) {
+            case NOT:
+                // logical not: assume 0/1 semantics
+                code.add("NOT $0, $0");
+                break;
+            case PLUS:
+                // unary plus: no-op
+                break;
+            case MINUS:
+                // unary minus: $0 = 0 - $0
+                code.add("SET $1, 0");
+                code.add("SUBI $0, $1, $0");
+                break;
+            default:
+                break;
         }
         return null;
     }

@@ -244,6 +244,15 @@ public class ASTBuilder extends VYPBaseVisitor<Object> {
             Expression inner = (Expression) visit(ctx.unaryExpr());
             return new UnaryOp(inner, UnaryOp.UnaryOperator.NOT, getLocation(ctx));
         }
+        if (ctx.MINUS() != null) {
+            Expression inner = (Expression) visit(ctx.unaryExpr());
+            return new UnaryOp(inner, UnaryOp.UnaryOperator.MINUS, getLocation(ctx));
+        }
+        // Some grammars don't generate a PLUS() accessor for unary '+'; check token text instead
+        if (ctx.getStart() != null && "+".equals(ctx.getStart().getText())) {
+            Expression inner = (Expression) visit(ctx.unaryExpr());
+            return new UnaryOp(inner, UnaryOp.UnaryOperator.PLUS, getLocation(ctx));
+        }
         return (Expression) visit(ctx.primaryExpr());
     }
     @Override

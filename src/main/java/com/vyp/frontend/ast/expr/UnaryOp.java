@@ -6,7 +6,9 @@ import com.vyp.frontend.ASTVisitor;
 public class UnaryOp extends Expression {
 
     public enum UnaryOperator {
-        NOT
+        NOT,
+        PLUS,
+        MINUS
     }
 
     private Expression expression;
