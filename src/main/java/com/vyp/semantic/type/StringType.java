@@ -6,4 +6,8 @@ public class StringType extends Type {
     public StringType() {
         super(BasicType.STRING);
     }
+    @Override
+    public String toString() {  
+        return "string";
+    }
 }

@@ -7,4 +7,10 @@ public class IntType extends Type {
     public IntType() {
         super(BasicType.INT);
     }
+
+    @Override
+    public String toString() {  
+        return "int";
+    }
+
 }
