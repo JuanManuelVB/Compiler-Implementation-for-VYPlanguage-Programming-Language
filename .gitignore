@@ -1,10 +1,9 @@
-# Build and generated files
-/target/
-/out/
+# Build artifacts
+target/
+*.class
 
-# ANTLR temporary/generated copies
-/src/main/antlr4/.antlr/
-
-# IDE files
+# IDE / OS
 .idea/
 *.iml
+*.class
+.DS_Store

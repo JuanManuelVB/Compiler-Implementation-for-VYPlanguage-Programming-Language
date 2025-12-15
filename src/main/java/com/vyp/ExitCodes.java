@@ -1,8 +1,8 @@
 package com.vyp;
 
 public final class ExitCodes {
-    private ExitCodes() {}
-
+   
+    //Global constants for exit codes
     public static final int SUCCESS = 0;
     public static final int LEXICAL_ERROR = 11;
     public static final int SYNTAX_ERROR = 12;

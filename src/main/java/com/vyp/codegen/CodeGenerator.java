@@ -7,6 +7,7 @@ import com.vyp.frontend.ast.FunctionDecl;
 import com.vyp.frontend.ast.Program;
 import com.vyp.frontend.ast.Parameter;
 import com.vyp.frontend.ast.expr.BinaryOp;
+import com.vyp.frontend.ast.expr.Expression;
 import com.vyp.frontend.ast.expr.FunctionCallExpr;
 import com.vyp.frontend.ast.expr.IntLiteral;
 import com.vyp.frontend.ast.expr.StringLiteral;
@@ -17,33 +18,29 @@ import com.vyp.frontend.ast.stmt.BlockStmt;
 import com.vyp.frontend.ast.stmt.ExprStmt;
 import com.vyp.frontend.ast.stmt.IfStmt;
 import com.vyp.frontend.ast.stmt.ReturnStmt;
+import com.vyp.frontend.ast.stmt.Statement;
 import com.vyp.frontend.ast.stmt.VarDeclStmt;
 import com.vyp.frontend.ast.stmt.WhileStmt;
+import com.vyp.semantic.type.StringType;
+import com.vyp.util.ErrorReporter;
 
-
+// A simple code generator that produces VYPcode from the AST
 public class CodeGenerator implements ASTVisitor<Void> {
 
     private final List<String> code = new ArrayList<>();
-    private final LabelManager labels = new LabelManager();
 
-    // In a small, human-style code generator we keep a table of string literals
-    // and a simple convention for calling and returning. This generator aims
-    // to produce easy-to-read VYPcode rather than to be fully optimal.
-    private final Map<String,String> stringPool = new LinkedHashMap<>();
+    // simple label manager 
+    private int labelCounter = 0;
 
-    public List<String> generate(Program program) {
-        program.accept(this);
-        // Emit data (string literals) at the end so they are easy to find.
-        if (!stringPool.isEmpty()) {
-            code.add(0, "\n; -- data section --");
-            for (Map.Entry<String,String> e : stringPool.entrySet()) {
-                code.add(1, "DATA " + e.getValue() + ", \"" + e.getKey() + "\"");
-            }
-            code.add(1, "; -- end data --\n");
-        }
-        return code;
+    private String newLabel() {
+        return "L" + (labelCounter++);
     }
 
+    public List<String> generate(Program p) {
+        p.accept(this);
+        return code;
+    }
+    
     @Override
     public Void visit(Program program) {
         for (FunctionDecl f : program.getFunctions()) {
@@ -55,73 +52,46 @@ public class CodeGenerator implements ASTVisitor<Void> {
     @Override
     public Void visit(FunctionDecl f) {
         code.add("LABEL " + f.getName());
-        // simple prolog: reserve space for locals if needed (omitted here)
-        // emit body
-        // function body is a BlockStmt
-        if (f.getBody() != null) {
-            f.getBody().accept(this);
+        f.getBody().accept(this);
+        code.add("RETURN");
+        return null;
+    }
+
+    @Override
+    public Void visit(BlockStmt b) {
+        for (Statement s : b.getStatements()) {
+            s.accept(this);
         }
-
-        // implicit return for void functions
-        code.add("RETURN [$SP]");
-        return null;
-    }
-
-    @Override
-    public Void visit(com.vyp.frontend.ast.expr.Expression node) {
-        // Generic expression visit: nothing to do here because concrete
-        // expression nodes implement their own visits. This keeps the
-        // implementation explicit and easy to follow.
-        return null;
-    }
-
-    @Override
-    public Void visit(Parameter node) {
-        // Parameters are handled at function prolog/semantic phases; the
-        // generator doesn't need to emit anything per-parameter here.
-        return null;
-    }
-
-    @Override
-    public Void visit(AssignStmt s) {
-        s.getValue().accept(this); // deja el valor en un registro
-        code.add("SET " + s.getName() + ", $0");
         return null;
     }
 
     @Override
     public Void visit(VarDeclStmt s) {
-        // For this simple generator we don't emit stack bookkeeping for
-        // local declarations; variables are referenced by name in the
-        // generated code (SET x, $0 / GET x -> $0). Keep a comment so the
-        // emitted VYPcode is readable for humans.
         for (String name : s.getVarNames()) {
-            code.add("; local decl " + name + " : " + s.getType());
+            code.add("; local var " + name + " : " + s.getType());
         }
         return null;
     }
 
     @Override
-    public Void visit(ReturnStmt s) {
-        if (s.getValue() != null) {
-            s.getValue().accept(this);
-        }
-        code.add("RETURN [$SP]");
-        return null;
-    }
-
-    @Override
-    public Void visit(BlockStmt s) {
-        for (var st : s.getStatements()) {
-            st.accept(this);
-        }
+    public Void visit(AssignStmt s) {
+        s.getValue().accept(this); // sets the value in $0
+        code.add("SET " + s.getName() + ", $0");
         return null;
     }
 
     @Override
     public Void visit(ExprStmt s) {
-        // Evaluate and discard result
-        s.getExpr().accept(this);
+        s.getExpr().accept(this);   // Evaluate and discard result
+        return null;
+    }
+
+     @Override
+    public Void visit(ReturnStmt s) {
+        if (s.getValue() != null) {
+            s.getValue().accept(this);
+        }
+        code.add("RETURN [$SP]");
         return null;
     }
 
@@ -132,17 +102,48 @@ public class CodeGenerator implements ASTVisitor<Void> {
     }
 
     @Override
-    public Void visit(StringLiteral e) {
-        // Deduplicate strings into the data section
-        String lit = e.getValue();
-        String label = stringPool.get(lit);
-        if (label == null) {
-            label = "STR" + (stringPool.size() + 1);
-            stringPool.put(lit, label);
+    public Void visit(StringLiteral s) {
+    code.add("SET $0, \"" + s.getValue() + "\"");
+    return null;
+}
+
+
+    @Override
+    public Void visit(IfStmt s) {
+        String elseL = newLabel();
+        String endL = newLabel();
+
+        s.getCondition().accept(this); // result in $0
+        code.add("JUMPZ $0, " + elseL); 
+
+        s.getIfTrue().accept(this);
+        code.add("JUMP " + endL);
+
+        code.add("LABEL " + elseL);
+        if (s.getIfFalse() != null) {
+            s.getIfFalse().accept(this);
         }
-        code.add("SET $0, " + label);
+
+        code.add("LABEL " + endL);
         return null;
     }
+
+    @Override
+    public Void visit(WhileStmt s) {
+        String start = newLabel();
+        String end = newLabel();
+
+        code.add("LABEL " + start);
+        s.getCondition().accept(this);
+        code.add("JUMPZ $0, " + end);
+
+        s.getBody().accept(this);
+        code.add("JUMP " + start);
+        code.add("LABEL " + end);
+        return null;
+    }
+
+    
 
     @Override
     public Void visit(Var e) {
@@ -150,19 +151,17 @@ public class CodeGenerator implements ASTVisitor<Void> {
         return null;
     }
 
+
     @Override
     public Void visit(FunctionCallExpr e) {
-        // Evaluate args left-to-right and push them
-        for (var arg : e.getArguments()) {
+        for (Expression arg : e.getArguments()) { // Evaluate args left-to-right and push them
             arg.accept(this);
             code.add("PUSH $0");
         }
         code.add("CALL " + e.getFunctionName());
-        // Assume CALL leaves return value in $0; caller is responsible for
-        // cleaning up the stack in a real ABI. For this educational backend
-        // we keep it simple and human-friendly.
         return null;
     }
+
 
     @Override
     public Void visit(UnaryOp e) {
@@ -244,44 +243,30 @@ public class CodeGenerator implements ASTVisitor<Void> {
                 code.add("CALL concat");
                 break;
             default:
-                // Unknown operator: emit a comment so output stays human-readable
                 code.add("; unsupported binary operator " + e.getOperator());
+                throw new ErrorReporter.CompilerException(null, null, labelCounter);
         }
         return null;
     }
 
     @Override
-    public Void visit(IfStmt s) {
-        String elseL = labels.fresh("if_else");
-        String endL = labels.fresh("if_end");
-
-        s.getCondition().accept(this); // result in $0
-        code.add("JZ $0, " + elseL);
-
-        // then
-        s.getIfTrue().accept(this);
-        code.add("JMP " + endL);
-
-        // else
-        code.add("LABEL " + elseL);
-        if (s.getIfFalse() != null) {
-            s.getIfFalse().accept(this);
-        }
-
-        code.add("LABEL " + endL);
+    public Void visit(Expression node) {
         return null;
     }
 
     @Override
-    public Void visit(WhileStmt s) {
-        String start = labels.fresh("while_start");
-        String end = labels.fresh("while_end");
-        code.add("LABEL " + start);
-        s.getCondition().accept(this);
-        code.add("JZ $0, " + end);
-        s.getBody().accept(this);
-        code.add("JMP " + start);
-        code.add("LABEL " + end);
+    public Void visit(Parameter node) {
         return null;
     }
+
+
+
+
+   
+
+    
+
+
+
+   
 }

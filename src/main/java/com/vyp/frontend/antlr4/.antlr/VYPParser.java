@@ -128,6 +128,14 @@ public class VYPParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_program; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).enterProgram(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).exitProgram(this);
+		}
 	}
 
 	public final ProgramContext program() throws RecognitionException {
@@ -197,6 +205,14 @@ public class VYPParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_functionDecl; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).enterFunctionDecl(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).exitFunctionDecl(this);
+		}
 	}
 
 	public final FunctionDeclContext functionDecl() throws RecognitionException {
@@ -265,6 +281,14 @@ public class VYPParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_paramList; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).enterParamList(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).exitParamList(this);
+		}
 	}
 
 	public final ParamListContext paramList() throws RecognitionException {
@@ -315,6 +339,14 @@ public class VYPParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_param; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).enterParam(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).exitParam(this);
+		}
 	}
 
 	public final ParamContext param() throws RecognitionException {
@@ -353,6 +385,14 @@ public class VYPParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_functionCallStmt; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).enterFunctionCallStmt(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).exitFunctionCallStmt(this);
+		}
 	}
 
 	public final FunctionCallStmtContext functionCallStmt() throws RecognitionException {
@@ -421,6 +461,14 @@ public class VYPParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_statement; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).enterStatement(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).exitStatement(this);
+		}
 	}
 
 	public final StatementContext statement() throws RecognitionException {
@@ -513,6 +561,14 @@ public class VYPParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_block; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).enterBlock(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).exitBlock(this);
+		}
 	}
 
 	public final BlockContext block() throws RecognitionException {
@@ -571,6 +627,14 @@ public class VYPParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_localVarDecl; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).enterLocalVarDecl(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).exitLocalVarDecl(this);
+		}
 	}
 
 	public final LocalVarDeclContext localVarDecl() throws RecognitionException {
@@ -627,6 +691,14 @@ public class VYPParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_assignStmt; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).enterAssignStmt(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).exitAssignStmt(this);
+		}
 	}
 
 	public final AssignStmtContext assignStmt() throws RecognitionException {
@@ -675,6 +747,14 @@ public class VYPParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_ifStmt; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).enterIfStmt(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).exitIfStmt(this);
+		}
 	}
 
 	public final IfStmtContext ifStmt() throws RecognitionException {
@@ -734,6 +814,14 @@ public class VYPParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_whileStmt; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).enterWhileStmt(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).exitWhileStmt(this);
+		}
 	}
 
 	public final WhileStmtContext whileStmt() throws RecognitionException {
@@ -776,6 +864,14 @@ public class VYPParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_returnStmt; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).enterReturnStmt(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).exitReturnStmt(this);
+		}
 	}
 
 	public final ReturnStmtContext returnStmt() throws RecognitionException {
@@ -822,6 +918,14 @@ public class VYPParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_exprStmt; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).enterExprStmt(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).exitExprStmt(this);
+		}
 	}
 
 	public final ExprStmtContext exprStmt() throws RecognitionException {
@@ -856,6 +960,14 @@ public class VYPParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_expr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).enterExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).exitExpr(this);
+		}
 	}
 
 	public final ExprContext expr() throws RecognitionException {
@@ -895,6 +1007,14 @@ public class VYPParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_logicalOrExpr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).enterLogicalOrExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).exitLogicalOrExpr(this);
+		}
 	}
 
 	public final LogicalOrExprContext logicalOrExpr() throws RecognitionException {
@@ -951,6 +1071,14 @@ public class VYPParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_logicalAndExpr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).enterLogicalAndExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).exitLogicalAndExpr(this);
+		}
 	}
 
 	public final LogicalAndExprContext logicalAndExpr() throws RecognitionException {
@@ -1011,6 +1139,14 @@ public class VYPParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_equalityExpr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).enterEqualityExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).exitEqualityExpr(this);
+		}
 	}
 
 	public final EqualityExprContext equalityExpr() throws RecognitionException {
@@ -1087,6 +1223,14 @@ public class VYPParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_relationalExpr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).enterRelationalExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).exitRelationalExpr(this);
+		}
 	}
 
 	public final RelationalExprContext relationalExpr() throws RecognitionException {
@@ -1155,6 +1299,14 @@ public class VYPParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_additiveExpr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).enterAdditiveExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).exitAdditiveExpr(this);
+		}
 	}
 
 	public final AdditiveExprContext additiveExpr() throws RecognitionException {
@@ -1223,6 +1375,14 @@ public class VYPParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_multiplicativeExpr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).enterMultiplicativeExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).exitMultiplicativeExpr(this);
+		}
 	}
 
 	public final MultiplicativeExprContext multiplicativeExpr() throws RecognitionException {
@@ -1286,6 +1446,14 @@ public class VYPParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_unaryExpr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).enterUnaryExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).exitUnaryExpr(this);
+		}
 	}
 
 	public final UnaryExprContext unaryExpr() throws RecognitionException {
@@ -1356,6 +1524,14 @@ public class VYPParser extends Parser {
 	public static class StringLiteralContext extends PrimaryExprContext {
 		public TerminalNode STRING_LITERAL() { return getToken(VYPParser.STRING_LITERAL, 0); }
 		public StringLiteralContext(PrimaryExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).enterStringLiteral(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).exitStringLiteral(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class FunctionCallExprContext extends PrimaryExprContext {
@@ -1366,16 +1542,40 @@ public class VYPParser extends Parser {
 			return getRuleContext(ArgListContext.class,0);
 		}
 		public FunctionCallExprContext(PrimaryExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).enterFunctionCallExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).exitFunctionCallExpr(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class IntLiteralContext extends PrimaryExprContext {
 		public TerminalNode INT_LITERAL() { return getToken(VYPParser.INT_LITERAL, 0); }
 		public IntLiteralContext(PrimaryExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).enterIntLiteral(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).exitIntLiteral(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class VarRefContext extends PrimaryExprContext {
 		public TerminalNode IDENT() { return getToken(VYPParser.IDENT, 0); }
 		public VarRefContext(PrimaryExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).enterVarRef(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).exitVarRef(this);
+		}
 	}
 	@SuppressWarnings("CheckReturnValue")
 	public static class ParenExprContext extends PrimaryExprContext {
@@ -1385,6 +1585,14 @@ public class VYPParser extends Parser {
 		}
 		public TerminalNode RPAREN() { return getToken(VYPParser.RPAREN, 0); }
 		public ParenExprContext(PrimaryExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).enterParenExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).exitParenExpr(this);
+		}
 	}
 
 	public final PrimaryExprContext primaryExpr() throws RecognitionException {
@@ -1482,6 +1690,14 @@ public class VYPParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_argList; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).enterArgList(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).exitArgList(this);
+		}
 	}
 
 	public final ArgListContext argList() throws RecognitionException {
@@ -1532,6 +1748,14 @@ public class VYPParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_type; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).enterType(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).exitType(this);
+		}
 	}
 
 	public final TypeContext type() throws RecognitionException {
@@ -1579,6 +1803,14 @@ public class VYPParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_primitiveType; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).enterPrimitiveType(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof VYPListener ) ((VYPListener)listener).exitPrimitiveType(this);
+		}
 	}
 
 	public final PrimitiveTypeContext primitiveType() throws RecognitionException {

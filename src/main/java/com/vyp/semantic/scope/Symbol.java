@@ -6,16 +6,22 @@ import com.vyp.frontend.ast.SourceLocation;
 import com.vyp.semantic.type.Type;
 
 public class Symbol {
+
+    /** Enum class Kind diferenciates if the symbol is a variable or a function.
+     * A symbol is a element in the symbol table representing either a variable or a function.
+    */
     public enum Kind {
         VARIABLE, FUNCTION
     }
 
-    private String name;
-    private Kind kind;
+    private String name; // name of the symbol
+    private Kind kind; // VARIABLE or FUNCTION
     private Type type; // variable: type; function: return type
     private List<Type> paramTypes; // if kind == FUNCTION
-    private SourceLocation location;
+    private SourceLocation location; //for error reporting
 
+
+    //Constructor for variable and function symbols
     public static Symbol variable(String name, Type type, SourceLocation location) {
         return new Symbol(name, Kind.VARIABLE, type, null, location);
     }
@@ -36,7 +42,7 @@ public class Symbol {
         this.location = location;
     }
 
-    // getters...
+    // Getters for name, kind, type, paramTypes and location
     public String getName() {
         return name;
     }
@@ -57,10 +63,12 @@ public class Symbol {
         return location;
     }
 
+    /** Returns true if it is a function, false if it is a variable */
     public boolean isFunction() {
         return kind == Kind.FUNCTION && paramTypes != null;
     }
 
+    /** Setter for kind */
     public void setKind(Kind kindOfSymbol) {
        this.kind = kindOfSymbol;
     }
