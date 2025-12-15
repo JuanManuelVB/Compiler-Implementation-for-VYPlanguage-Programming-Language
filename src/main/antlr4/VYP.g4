@@ -5,9 +5,9 @@ grammar VYP;
 program: ( functionDecl  | statement)* EOF;
 
 // functionDecl
-functionDecl: type IDENT LPAREN (paramList|VOID) RPAREN block;
+functionDecl: type IDENT LPAREN (paramList | VOID)? RPAREN block;
 paramList: param (COMMA param)*;
-param: DATA_TYPE IDENT;
+param: primitiveType IDENT;
 
 /* Function call as a standalone statement: fun_id ( ( expr ( , expr )* )? ) ; */
 functionCallStmt: IDENT LPAREN argList? RPAREN SEMI;
@@ -85,8 +85,9 @@ argList: expr (COMMA expr)*;
 
 
 //TYPES
-type: VOID|DATA_TYPE;
-DATA_TYPE: INT|STRING;
+// Types: primitive types (int, string) and void
+type: VOID | primitiveType;
+primitiveType: INT | STRING;
 
 //LEXER (tokens explícitos)
 

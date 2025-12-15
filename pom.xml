@@ -31,7 +31,10 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <packageName>com.vyp.parser</packageName>
+                    <!-- Skip automatic ANTLR generation to avoid grammar/version conflicts
+                         (generated sources are already present in the repo). -->
+                    <skip>true</skip>
+                    <packageName>com.vyp.antlr4</packageName>
                 </configuration>
             </plugin>
             <plugin>
