@@ -1,4 +1,4 @@
-// Generated from src/main/antlr4/VYP.g4 by ANTLR 4.13.1
+// Generated from d:/sara/trabajos/UNIOVI/TERCERO/erasmus/asignaturas/dlp/compilers/Compiler-Implementation-for-VYPlanguage-Programming-Language/src/main/antlr4/VYP.g4 by ANTLR 4.13.1
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -296,4 +296,14 @@ public interface VYPListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitType(VYPParser.TypeContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link VYPParser#primitiveType}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrimitiveType(VYPParser.PrimitiveTypeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link VYPParser#primitiveType}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrimitiveType(VYPParser.PrimitiveTypeContext ctx);
 }

@@ -2,15 +2,13 @@ package com.vyp.codegen;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * Small utility to generate fresh labels for the code generator.
- * Kept intentionally tiny and human-readable.
- */
-public class LabelManager {
-    private final AtomicInteger counter = new AtomicInteger(0);
 
-    /** Return a fresh label name (e.g. L1, L2...). */
-    public String fresh() {
-        return "L" + counter.incrementAndGet();
+public class LabelManager {
+   
+    private int id = 0;
+
+    /** Return a new label name (L1, L2...). */
+    public String newLabel() {
+        return "L" + id++;
     }
 }

@@ -1,4 +1,4 @@
-// Generated from src/main/antlr4/VYP.g4 by ANTLR 4.13.1
+// Generated from d:/sara/trabajos/UNIOVI/TERCERO/erasmus/asignaturas/dlp/compilers/Compiler-Implementation-for-VYPlanguage-Programming-Language/src/main/antlr4/VYP.g4 by ANTLR 4.13.1
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
@@ -347,6 +347,18 @@ public class VYPBaseListener implements VYPListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitType(VYPParser.TypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPrimitiveType(VYPParser.PrimitiveTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPrimitiveType(VYPParser.PrimitiveTypeContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
