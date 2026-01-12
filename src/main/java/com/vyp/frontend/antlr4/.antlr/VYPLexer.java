@@ -1,4 +1,4 @@
-// Generated from c:/Users/Juan Manuel/OneDrive - UNIVERSIDAD DE SEVILLA/UNI/eramus/compilers construction/Compiler Implementation for VYPlanguage Programming Language/src/main/java/com/vyp/frontend/antlr4/VYP.g4 by ANTLR 4.13.1
+// Generated from c:/uniovi/erasmus/asignaturas/compilers/compiler_project/Compiler-Implementation-for-VYPlanguage-Programming-Language/src/main/java/com/vyp/frontend/antlr4/VYP.g4 by ANTLR 4.13.1
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
@@ -116,22 +116,6 @@ public class VYPLexer extends Lexer {
 	@Override
 	public ATN getATN() { return _ATN; }
 
-	@Override
-	public void action(RuleContext _localctx, int ruleIndex, int actionIndex) {
-		switch (ruleIndex) {
-		case 29:
-			STRING_LITERAL_action((RuleContext)_localctx, actionIndex);
-			break;
-		}
-	}
-	private void STRING_LITERAL_action(RuleContext _localctx, int actionIndex) {
-		switch (actionIndex) {
-		case 0:
-			6
-			break;
-		}
-	}
-
 	public static final String _serializedATN =
 		"\u0004\u0000\"\u00d6\u0006\uffff\uffff\u0002\u0000\u0007\u0000\u0002\u0001"+
 		"\u0007\u0001\u0002\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004"+
@@ -239,7 +223,7 @@ public class VYPLexer extends Lexer {
 		"\u0000\u009e:\u0001\u0000\u0000\u0000\u009f\u00aa\u0005\"\u0000\u0000"+
 		"\u00a0\u00a5\u0005\\\u0000\u0000\u00a1\u00a6\u0007\u0001\u0000\u0000\u00a2"+
 		"\u00a3\u0005x\u0000\u0000\u00a3\u00a4\u0007\u0002\u0000\u0000\u00a4\u00a6"+
-		"\u0006\u001d\u0000\u0000\u00a5\u00a1\u0001\u0000\u0000\u0000\u00a5\u00a2"+
+		"\u0007\u0002\u0000\u0000\u00a5\u00a1\u0001\u0000\u0000\u0000\u00a5\u00a2"+
 		"\u0001\u0000\u0000\u0000\u00a6\u00a9\u0001\u0000\u0000\u0000\u00a7\u00a9"+
 		"\b\u0003\u0000\u0000\u00a8\u00a0\u0001\u0000\u0000\u0000\u00a8\u00a7\u0001"+
 		"\u0000\u0000\u0000\u00a9\u00ac\u0001\u0000\u0000\u0000\u00aa\u00a8\u0001"+
@@ -252,22 +236,22 @@ public class VYPLexer extends Lexer {
 		"\u0000\u00b5\u00b3\u0001\u0000\u0000\u0000\u00b6\u00b8\u0007\u0006\u0000"+
 		"\u0000\u00b7\u00b6\u0001\u0000\u0000\u0000\u00b8\u00b9\u0001\u0000\u0000"+
 		"\u0000\u00b9\u00b7\u0001\u0000\u0000\u0000\u00b9\u00ba\u0001\u0000\u0000"+
-		"\u0000\u00ba\u00bb\u0001\u0000\u0000\u0000\u00bb\u00bc\u0006\u001f\u0001"+
+		"\u0000\u00ba\u00bb\u0001\u0000\u0000\u0000\u00bb\u00bc\u0006\u001f\u0000"+
 		"\u0000\u00bc@\u0001\u0000\u0000\u0000\u00bd\u00be\u0005/\u0000\u0000\u00be"+
 		"\u00bf\u0005/\u0000\u0000\u00bf\u00c3\u0001\u0000\u0000\u0000\u00c0\u00c2"+
 		"\b\u0007\u0000\u0000\u00c1\u00c0\u0001\u0000\u0000\u0000\u00c2\u00c5\u0001"+
 		"\u0000\u0000\u0000\u00c3\u00c1\u0001\u0000\u0000\u0000\u00c3\u00c4\u0001"+
 		"\u0000\u0000\u0000\u00c4\u00c6\u0001\u0000\u0000\u0000\u00c5\u00c3\u0001"+
-		"\u0000\u0000\u0000\u00c6\u00c7\u0006 \u0001\u0000\u00c7B\u0001\u0000\u0000"+
+		"\u0000\u0000\u0000\u00c6\u00c7\u0006 \u0000\u0000\u00c7B\u0001\u0000\u0000"+
 		"\u0000\u00c8\u00c9\u0005/\u0000\u0000\u00c9\u00ca\u0005*\u0000\u0000\u00ca"+
 		"\u00ce\u0001\u0000\u0000\u0000\u00cb\u00cd\t\u0000\u0000\u0000\u00cc\u00cb"+
 		"\u0001\u0000\u0000\u0000\u00cd\u00d0\u0001\u0000\u0000\u0000\u00ce\u00cf"+
 		"\u0001\u0000\u0000\u0000\u00ce\u00cc\u0001\u0000\u0000\u0000\u00cf\u00d1"+
 		"\u0001\u0000\u0000\u0000\u00d0\u00ce\u0001\u0000\u0000\u0000\u00d1\u00d2"+
 		"\u0005*\u0000\u0000\u00d2\u00d3\u0005/\u0000\u0000\u00d3\u00d4\u0001\u0000"+
-		"\u0000\u0000\u00d4\u00d5\u0006!\u0001\u0000\u00d5D\u0001\u0000\u0000\u0000"+
-		"\t\u0000\u009d\u00a5\u00a8\u00aa\u00b3\u00b9\u00c3\u00ce\u0002\u0001\u001d"+
-		"\u0000\u0006\u0000\u0000";
+		"\u0000\u0000\u00d4\u00d5\u0006!\u0000\u0000\u00d5D\u0001\u0000\u0000\u0000"+
+		"\t\u0000\u009d\u00a5\u00a8\u00aa\u00b3\u00b9\u00c3\u00ce\u0001\u0006\u0000"+
+		"\u0000";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

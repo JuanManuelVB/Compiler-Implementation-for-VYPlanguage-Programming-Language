@@ -134,7 +134,7 @@ INT_LITERAL: [0-9]+;
 
 
 STRING_LITERAL
-    : '"' ( '\\' ( 'n' | 't' | '\\' | '"' | 'x' [0-9A-Fa-f]{6} )
+    : '"' ( '\\' ( 'n' | 't' | '\\' | '"' | 'x' [0-9A-Fa-f][0-9A-Fa-f] )
     | ~[\u0000-\u001F\u0022\\])* '"';
 
 /* Identifiers (declared after keywords so keywords match as tokens) */
