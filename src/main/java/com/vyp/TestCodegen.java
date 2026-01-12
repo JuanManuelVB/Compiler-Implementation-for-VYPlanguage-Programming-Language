@@ -3,6 +3,7 @@ package com.vyp;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -50,10 +51,10 @@ public class TestCodegen {
             // ensure parent directory exists
             Path parent = out.getParent();
             if (parent != null) Files.createDirectories(parent);
-            Files.writeString(out, String.join(System.lineSeparator(), code));
+            Files.writeString(out, String.join(System.lineSeparator(), code), StandardCharsets.UTF_8);
             System.err.println("Wrote generated VYPcode to: " + out.toString());
         } else {
             code.forEach(System.out::println);
         }
     }
-}
+}  
