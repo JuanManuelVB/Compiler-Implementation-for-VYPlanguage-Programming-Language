@@ -153,11 +153,13 @@ public class CodeGenerator implements ASTVisitor<Void> {
 
     @Override
     public Void visit(FunctionCallExpr e) {
-        for (Expression arg : e.getArguments()) { // Evaluate args left-to-right and push them
-            arg.accept(this);
-            code.add("PUSH $0");
+        // Evaluate args left-to-right and store in registers
+        List<Expression> args = e.getArguments();
+        for (int i = 0; i < args.size(); i++) {
+            args.get(i).accept(this); // result in $0
+            code.add("SET $" + i + ", $0");
         }
-        code.add("CALL " + e.getFunctionName());
+        code.add("CALL [$SP], " + e.getFunctionName());
         return null;
     }
 
@@ -182,7 +184,7 @@ public class CodeGenerator implements ASTVisitor<Void> {
                 break;
         }
         return null;
-    }
+    } 
 
     @Override
     public Void visit(BinaryOp e) {
@@ -235,11 +237,11 @@ public class CodeGenerator implements ASTVisitor<Void> {
                 code.add("OR $0, $1, $0");
                 break;
             case CONCAT:
-                // Push left and right and call runtime concat
+                // Call runtime concat with arguments in registers
                 // Evaluate left/right already done: left is in $1, right in $0
-                code.add("PUSH $1");
-                code.add("PUSH $0");
-                code.add("CALL concat");
+                code.add("SET $0, $1");
+                code.add("SET $1, $0");
+                code.add("CALL [$SP], concat");
                 break;
             default:
                 code.add("; unsupported binary operator " + e.getOperator());
