@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "TestCodegen",
+            "request": "launch",
+            "mainClass": "com.vyp.TestCodegen",
+            "projectName": "vyp-compiler"
+        },
+        {
+            "type": "java",
             "name": "TestASTAndSymbols",
             "request": "launch",
             "mainClass": "com.vyp.TestASTAndSymbols",
