@@ -150,19 +150,15 @@ public class CodeGenerator implements ASTVisitor<Void> {
         return null;
     }
 
-
     @Override
     public Void visit(FunctionCallExpr e) {
         // Evaluate args left-to-right and store in registers
-        List<Expression> args = e.getArguments();
-        for (int i = 0; i < args.size(); i++) {
-            args.get(i).accept(this); // result in $0
-            code.add("SET $" + i + ", $0");
+        for (Expression arg : e.getArguments()) {
+            arg.accept(this); 
         }
         code.add("CALL [$SP], " + e.getFunctionName());
         return null;
     }
-
 
     @Override
     public Void visit(UnaryOp e) {
@@ -237,10 +233,6 @@ public class CodeGenerator implements ASTVisitor<Void> {
                 code.add("OR $0, $1, $0");
                 break;
             case CONCAT:
-                // Call runtime concat with arguments in registers
-                // Evaluate left/right already done: left is in $1, right in $0
-                code.add("SET $0, $1");
-                code.add("SET $1, $0");
                 code.add("CALL [$SP], concat");
                 break;
             default:

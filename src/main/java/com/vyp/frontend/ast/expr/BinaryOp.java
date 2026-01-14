@@ -6,7 +6,7 @@ public class BinaryOp extends Expression {
 
     /** Public enum BinaryOperator that includes all the binary operators supported in VYP */
     public enum BinaryOperator {
-        ADD, SUB, MUL, DIV,LT, GT, LTE, GTE, EQ, NEQ, AND, OR,CONCAT 
+        ADD, SUB, MUL, DIV,LT, GT, LTE, GTE, EQ, NEQ, AND, OR, CONCAT 
     }   
 
     private Expression left;    //the left expression of the binary operation
