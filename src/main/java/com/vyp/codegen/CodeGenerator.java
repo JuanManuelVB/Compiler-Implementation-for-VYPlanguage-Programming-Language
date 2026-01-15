@@ -146,7 +146,7 @@ public class CodeGenerator implements ASTVisitor<Void> {
         if (s.getValue() != null) {
             s.getValue().accept(this);
         }
-        code.add("RETURN [$SP]");
+        code.add("RETURN");
         return null;
     }
 
@@ -169,7 +169,7 @@ public class CodeGenerator implements ASTVisitor<Void> {
         String endL = newLabel();
 
         s.getCondition().accept(this); // result in $0
-        code.add("JUMPZ $0 " + elseL); 
+        code.add("JUMPZ " + elseL + " $0"); 
 
         s.getIfTrue().accept(this);
         code.add("JUMP " + endL);
@@ -190,7 +190,7 @@ public class CodeGenerator implements ASTVisitor<Void> {
 
         code.add("LABEL " + start);
         s.getCondition().accept(this);
-        code.add("JUMPZ $0 " + end);
+        code.add("JUMPZ " + end + " $0");
 
         s.getBody().accept(this);
         code.add("JUMP " + start);
@@ -300,9 +300,10 @@ public class CodeGenerator implements ASTVisitor<Void> {
             case CONCAT:
                 // Call runtime concat with arguments in registers
                 // Evaluate left/right already done: left is in $1, right in $0
-                code.add("SET $0, $1");
-                code.add("SET $1, $0");
-                code.add("CALL [$SP], concat");
+                code.add("SET $2 $0");
+                code.add("SET $0 $1");
+                code.add("SET $1 $2");
+                code.add("CALL [$SP] concat");
                 break;
             default:
                 code.add("; unsupported binary operator " + e.getOperator());
