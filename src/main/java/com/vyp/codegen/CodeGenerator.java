@@ -62,12 +62,14 @@ public class CodeGenerator implements ASTVisitor<Void> {
         freeRegs.clear();
         varsPerBlock.clear();
         // initialize free registers $3..$9
-        for (int r = 9; r >= 3; r--) freeRegs.push(r);
+        for (int r = 9; r >= 3; r--)
+            freeRegs.push(r);
 
         code.add("LABEL " + f.getName());
         // start a function-level block so params are freed at function exit
         varsPerBlock.push(new ArrayList<>());
-        // allocate registers for parameters and move incoming arg registers ($0..$n) to dedicated regs
+        // allocate registers for parameters and move incoming arg registers ($0..$n) to
+        // dedicated regs
         List<Parameter> params = f.getParams();
         for (int i = 0; i < params.size(); i++) {
             String pname = params.get(i).getName();
@@ -77,7 +79,9 @@ public class CodeGenerator implements ASTVisitor<Void> {
         }
 
         f.getBody().accept(this);
-        code.add("RETURN");
+        if (!f.getName().equals("main")) {
+            code.add("RETURN [$SP]");
+        }
         return null;
     }
 
@@ -146,7 +150,7 @@ public class CodeGenerator implements ASTVisitor<Void> {
         if (s.getValue() != null) {
             s.getValue().accept(this);
         }
-        code.add("RETURN");
+        code.add("RETURN [$SP]");
         return null;
     }
 
@@ -217,11 +221,36 @@ public class CodeGenerator implements ASTVisitor<Void> {
     public Void visit(FunctionCallExpr e) {
         // Evaluate args left-to-right and store in registers
         List<Expression> args = e.getArguments();
-         for (int i = 0; i < args.size(); i++) {
-            args.get(i).accept(this); // result in $0
+        String name = e.getFunctionName();
+
+        // ----- EMBEDDED: print -----
+        if (name.equals("print")) {
+            for (Expression arg : args) {
+                arg.accept(this); 
+                code.add("WRITEI $0");
+            }
+            return null;
+        }
+
+        // ----- EMBEDDED: readInt -----
+        if (name.equals("readInt")) {
+            code.add("READI $0");
+            return null;
+        }
+
+        // ----- EMBEDDED: readString -----
+        if (name.equals("readString")) {
+            code.add("READS $0");
+            return null;
+        }
+
+        // ----- NORMAL FUNCTION CALL -----
+        for (int i = 0; i < args.size(); i++) {
+            args.get(i).accept(this);
             code.add("SET $" + i + " $0");
         }
-        code.add("CALL [$SP] " + e.getFunctionName());
+
+        code.add("CALL [$SP] " + name);
         return null;
     }
 
